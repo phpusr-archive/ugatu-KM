@@ -4,7 +4,7 @@ import scalafx.application.JFXApp
 import scalafx.scene.Scene
 import scalafx.scene.chart.{NumberAxis, CategoryAxis, LineChart, XYChart}
 import scalafx.Includes._
-import scalafx.scene.paint.{Color, Paint}
+import scalafx.scene.paint.Color
 import scalafx.scene.layout.{HBox, VBox, TilePane}
 import scalafx.geometry.{Orientation, Insets}
 import scalafx.scene.control.Button
@@ -37,8 +37,10 @@ object TestMonte extends JFXApp {
     cancelButton = true
   }
 
-  /** График */
-  private val lineChart = new LineChart[Number, Number](NumberAxis("X Axis"), NumberAxis("Y Axis")) {
+  // График
+  private val (xLowerBounds, xUpperBounds, xTickUnit)  = (0, 110, 5)
+  private val (yLowerBounds, yUpperBounds, yTickUnit)  = (-1500, 100, 100)
+  private val lineChart = new LineChart[Number, Number](NumberAxis("X Axis", xLowerBounds, xUpperBounds, xTickUnit), NumberAxis("Y Axis", yLowerBounds, yUpperBounds, yTickUnit)) {
     title = "Line Chart"
     val integralSeries = new XYChart.Series[Number, Number] {
       name = "Data Series 1"
@@ -73,8 +75,8 @@ object TestMonte extends JFXApp {
   /** Добавление точки на график */
   private def addPoint() {
     val s = new XYChart.Series[Number, Number] {
-      val x = Random.nextInt(100)
-      val y = Random.nextInt(1500) * -1
+      val x = Random.nextInt(xUpperBounds)
+      val y = Random.nextInt(yLowerBounds.abs) * -1 //TODO доделать
       data() += toChartData(x, y)
     }
     lineChart.data() += s

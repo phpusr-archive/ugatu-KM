@@ -43,10 +43,10 @@ object TestMonte extends JFXApp {
   private val partLabel = new Label
 
   // График
-  private val (xLowerBounds, xUpperBounds, xTickUnit)  = (0, 40, 5)
-  private val (yLowerBounds, yUpperBounds, yTickUnit)  = (-85000, 10000, 1000)
-  //private val lineChart = new LineChart[Number, Number](NumberAxis("X Axis", xLowerBounds, xUpperBounds, xTickUnit), NumberAxis("Y Axis", yLowerBounds, yUpperBounds, yTickUnit)) {
-  private val lineChart = new LineChart[Number, Number](NumberAxis("X Axis"), NumberAxis("Y Axis")) {
+  private val (xLowerBounds, xUpperBounds, xTickUnit)  = (5, 25, 1)
+  private val (yLowerBounds, yUpperBounds, yTickUnit)  = (0, 5000, 500)
+  private val lineChart = new LineChart[Number, Number](NumberAxis("X Axis", xLowerBounds, xUpperBounds, xTickUnit), NumberAxis("Y Axis", yLowerBounds, yUpperBounds, yTickUnit)) {
+//  private val lineChart = new LineChart[Number, Number](NumberAxis("X Axis"), NumberAxis("Y Axis")) {
     title = "Line Chart"
     val integralSeries = new XYChart.Series[Number, Number] {
       name = "Integral"
@@ -85,7 +85,7 @@ object TestMonte extends JFXApp {
   private def addPoint() {
     val s = new XYChart.Series[Number, Number] {
       val x = Random.nextInt(xUpperBounds)
-      val y = Random.nextInt(yLowerBounds.abs) * -1
+      val y = Random.nextInt(yUpperBounds)
       data() += toChartData(x, y)
 
       val yCalc = Func.integral(x)
@@ -98,7 +98,7 @@ object TestMonte extends JFXApp {
     // Обновление информации на лейблах
     pointsCountLabel.text = s"Gotten: $gottenPointsCount   Not: $notGottenPointsCount"
     areaLabel.text = s"Box area: $boxArea   Req. area: $requiredArea"
-    partLabel.text = s": ${(requiredArea.toDouble / boxArea * 100) formatted "%1.2f"}"
+    partLabel.text = s"%: ${(requiredArea.toDouble / boxArea * 100) formatted "%1.2f"}"
   }
 
   /** Площадь области, в которой находится график */

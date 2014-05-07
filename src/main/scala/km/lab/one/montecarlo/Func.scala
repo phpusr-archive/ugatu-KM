@@ -1,5 +1,7 @@
 package km.lab.one.montecarlo
 
+import km.lab.one.montecarlo.integral.Integral
+
 /**
  * @author phpusr
  *         Date: 06.05.14
@@ -11,12 +13,22 @@ package km.lab.one.montecarlo
  */
 object Func {
 
+  val valA = 5.0
+  val valB = 15.0
+  val valL = 15.0
+  val valN = 100.0
+  val valH = (valB - valA) / valN
+
   /** Нахождение определенного интеграла методом Симпсона */
-  val integral = (x: Int) => Simpson.integral(52, x, Math.E)
+  val integral = (x: Double) => Integral.calc(valL, valN, x)
 
   /** Набор координат */
   val data = () => {
-    for (i <- 1 to 30) yield (i.toDouble, integral(i))
+    (0 until 200).map { i =>
+      val x = Integral.calcItemX(valA, valH, i)
+      val y = integral(x)
+      (x, y)
+    }
   }
 
 

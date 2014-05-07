@@ -32,7 +32,7 @@ object MonteCarlo extends JFXApp {
     prefWidth = 40
   }
   /** Кнопка добавления точек на график */
-  private val addPointButton = new Button("Add point") {
+  private val addPointButton = new Button("Add points") {
     defaultButton = true
   }
   /** Кнопка выхода */

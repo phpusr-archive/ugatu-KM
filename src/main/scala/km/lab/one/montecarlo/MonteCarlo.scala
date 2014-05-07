@@ -78,7 +78,9 @@ object MonteCarlo extends JFXApp {
     }
   }
 
+  //-------------------------- Init --------------------------
   addPoints(100)
+  //-------------------------- End init --------------------------
 
   /** Добавление точек на график */
   private def addPoints(count: Int) = for (i <- 1 to count) addPoint()

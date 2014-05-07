@@ -6,7 +6,7 @@ import scalafx.scene.chart.{NumberAxis, LineChart, XYChart}
 import scalafx.Includes._
 import scalafx.scene.layout.{HBox, VBox}
 import scalafx.geometry.Insets
-import scalafx.scene.control.{Label, Button}
+import scalafx.scene.control.{TextField, Label, Button}
 import scalafx.event.ActionEvent
 import scala.util.Random
 
@@ -26,6 +26,11 @@ object MonteCarlo extends JFXApp {
   /** Количество непопадающих точек */
   private var notGottenPointsCount = 0
 
+  /** Поле ввода кол-ва добавляемых точек */
+  private val addPointsCountTextField = new TextField {
+    text.value = "20"
+    prefWidth = 40
+  }
   /** Кнопка добавления точек на график */
   private val addPointButton = new Button("Add point") {
     defaultButton = true
@@ -46,7 +51,7 @@ object MonteCarlo extends JFXApp {
   private val (xLowerBounds, xUpperBounds, xTickUnit)  = (5, 25, 1)
   private val (yLowerBounds, yUpperBounds, yTickUnit)  = (0, 5000, 500)
   private val lineChart = new LineChart[Number, Number](NumberAxis("X Axis", xLowerBounds, xUpperBounds, xTickUnit), NumberAxis("Y Axis", yLowerBounds, yUpperBounds, yTickUnit)) {
-//  private val lineChart = new LineChart[Number, Number](NumberAxis("X Axis"), NumberAxis("Y Axis")) {
+  //private val lineChart = new LineChart[Number, Number](NumberAxis("X Axis"), NumberAxis("Y Axis")) {
     title = "Line Chart"
     val integralSeries = new XYChart.Series[Number, Number] {
       name = "Integral"
@@ -66,7 +71,7 @@ object MonteCarlo extends JFXApp {
           content = List(pointsCountLabel, areaLabel, partLabel)
         }
         val buttonsBox = new HBox(10) {
-          content = List(addPointButton, exitButton)
+          content = List(addPointsCountTextField, addPointButton, exitButton)
         }
         content = List(lineChart, labelsBox, buttonsBox)
       }
@@ -96,7 +101,7 @@ object MonteCarlo extends JFXApp {
     lineChart.data() += s
 
     // Обновление информации на лейблах
-    pointsCountLabel.text = s"Gotten: $gottenPointsCount   Not: $notGottenPointsCount"
+    pointsCountLabel.text = s"Gotten: $gottenPointsCount   Not gotten: $notGottenPointsCount"
     areaLabel.text = s"Box area: $boxArea   Req. area: $requiredArea"
     partLabel.text = s"%: ${(requiredArea.toDouble / boxArea * 100) formatted "%1.2f"}"
   }
@@ -107,10 +112,13 @@ object MonteCarlo extends JFXApp {
   /** Искомая площадь фигуры */
   private def requiredArea = boxArea * gottenPointsCount / (gottenPointsCount + notGottenPointsCount)
 
+  /** Кол-во введенных точек для добавления */
+  private def getAddPointsCount = addPointsCountTextField.text.value.toInt
+
   // Обработчики событий
 
   /** Добавление точки на график */
-  addPointButton.onAction = (ae: ActionEvent) => addPoint()
+  addPointButton.onAction = (ae: ActionEvent) => addPoints(getAddPointsCount)
   /** Выход из программы */
   exitButton.onAction = (ae: ActionEvent) => System.exit(0)
 

@@ -9,10 +9,15 @@ package km.lab.one.montecarlo
 /**
  * Функция для графика
  */
-object Func{
+object Func {
 
+  /** Нахождение определенного интеграла методом Симпсона */
+  val integral = (x: Int) => Simpson.integral(52, x, Math.E)
+
+  /** Набор координат */
   val data = () => {
-    for (i <- 1 to 10) yield (i*10.toDouble, Simpson.integral(52, i, Math.E))
+    for (i <- 1 to 30) yield (i.toDouble, integral(i))
   }
+
 
 }

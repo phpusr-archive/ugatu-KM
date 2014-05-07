@@ -1,0 +1,9 @@
+/.idea
+/*.iml
+/out
+
+/target
+/project/target
+/project/project
+
+*.sc

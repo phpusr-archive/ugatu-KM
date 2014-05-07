@@ -19,7 +19,7 @@ import scala.util.Random
 /**
  * Вычисление интеграла функции методом Монте-Карло
  */
-object TestMonte extends JFXApp {
+object MonteCarlo extends JFXApp {
 
   /** Количество попадающих точек */
   private var gottenPointsCount = 0

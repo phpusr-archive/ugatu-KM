@@ -1,4 +1,4 @@
-package km.lab.one.montecarlo;
+package km.lab.one.integral;
 
 /**
  * @author phpusr

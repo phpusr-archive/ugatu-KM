@@ -1,6 +1,6 @@
 package km.lab.one.montecarlo
 
-import km.lab.one.montecarlo.integral.Integral
+import km.lab.one.integral.Integral
 
 /**
  * @author phpusr

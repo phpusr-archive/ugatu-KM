@@ -1,4 +1,4 @@
-package km.lab.one.montecarlo.integral;
+package km.lab.one.integral;
 
 /**
  *         Date: 07.05.14

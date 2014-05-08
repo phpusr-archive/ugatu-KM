@@ -38,4 +38,7 @@ case class Detail(name: String, detailType: DetailType) {
     val handlingTime = op.handlingTime.get
     Thread.sleep(handlingTime)
   }
+
+  /** Текущая операция */
+  def currentOperation = if (operationQueue.nonEmpty) Option(operationQueue.head) else None
 }

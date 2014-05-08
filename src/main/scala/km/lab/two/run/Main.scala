@@ -5,6 +5,7 @@ import km.lab.two.detail.{DetailGenerator, DetailType, Detail}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import org.dyndns.phpusr.util.log.Logger
+import km.lab.two.machinetool.MachineTool
 
 /**
  * @author phpusr
@@ -45,19 +46,25 @@ object Main extends App {
   val generatorV2 = new DetailGenerator(DetailType.V2, addDetailToQueue, incomingIntervalTypeTwo)
   generatorV2.start()
 
-  // Размещение деталей по станкам
-  while(detailQueue.nonEmpty) {
-    val detail = detailQueue.dequeue()
-    val currentOperation = detail.currentOperation
+  // Запуск станков
+  MachineTool.setAction(addDetailToQueue)
+  MachineTool.startAll()
 
-    // Если есть следующая операция, то помещаем деталь в очередь станка, выполняющего эту операцию
-    if (currentOperation.isDefined) {
-      val machineTool = currentOperation.get.machineTool
-      logger.debug(s"Detail: $detail add to $machineTool")
-      machineTool.addDetail(detail)
+  // Размещение деталей по станкам
+  while(true) {
+    if (detailQueue.nonEmpty) {
+      val detail = detailQueue.dequeue()
+      val currentOperation = detail.currentOperation
+
+      // Если есть следующая операция, то помещаем деталь в очередь станка, выполняющего эту операцию
+      if (currentOperation.isDefined) {
+        val machineTool = currentOperation.get.machineTool
+        logger.debug(s"Detail: $detail add to $machineTool")
+        machineTool.addDetail(detail)
+      }
+      // Если нет, значти деталь обработана полностью, отправляем ее на склад
+      else addToWarehouse(detail)
     }
-    // Если нет, значти деталь обработана полностью, отправляем ее на склад
-    else addToWarehouse(detail)
   }
 
   /** Добавить деталь на склад */

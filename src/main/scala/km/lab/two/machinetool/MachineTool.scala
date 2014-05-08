@@ -1,7 +1,8 @@
 package km.lab.two.machinetool
 
-import km.lab.two.detail.Detail
 import scala.collection.mutable
+import km.lab.two.detail.Detail
+import org.dyndns.phpusr.util.log.Logger
 
 /**
  * @author phpusr
@@ -14,34 +15,55 @@ import scala.collection.mutable
  */
 case class MachineTool(name: String) {
   /** Включен или выключен станок */
-  private val enable = false
-
-  /** Глобальная очередь деталей */
-  private val globalDetailQueue: Option[mutable.Queue[Detail]] = None
+  private var enable = false
 
   /** Очередь деталей */
   private val detailQueue = mutable.Queue[Detail]()
 
+  /** Действие над обработанной деталью */
+  private var action: Detail => Unit = null
+
+  /** Logger */
+  val logger = new Logger(true, true, true)
+
+  /** Обработчик деталей */
+  private val handler = new Thread(new Runnable {
+    override def run() {
+      while (enable) {
+        if (detailQueue.nonEmpty) {
+          val currentDetail = detailQueue.dequeue()
+          logger.debug(s"$this processes $currentDetail")
+          currentDetail.operation()
+          action(currentDetail)
+        }
+      }
+    }
+  })
+
   //--------------------------------------------------
+
+  /** //TODO */
+  //def act_= (a: Detail => Unit): Unit = action = a
 
   /** Добавление детали в очередь */
   def addDetail(detail: Detail) {
+    logger.debug(s"$this add $detail")
     detailQueue += detail
   }
 
-  /** Обработка деталей */
-  //TODO в отдельном потоке
-  private def treatmentDetails() {
-    while (enable) {
-      if (!detailQueue.isEmpty) {
-        val currentDetail = detailQueue.dequeue()
-        currentDetail.operation()
-
-        // Возвращаение детали в глобаольную очередь
-        globalDetailQueue.get += currentDetail
-      }
-    }
+  /** Запуск станка */
+  def start() {
+    logger.debug(s"Start $this")
+    enable = true
+    handler.start()
   }
+
+  /** Остановка станка */
+  def stop() {
+    logger.debug(s"Stop $this")
+    enable = false
+  }
+
 }
 
 /**
@@ -51,4 +73,15 @@ object MachineTool {
   val A1 = MachineTool("A1")
   val A2 = MachineTool("A2")
   val A3 = MachineTool("A3")
+  
+  private val list = List(A1, A2, A3)
+
+  /** Установить действие над обработанной деталью всем станкам */
+  def setAction(action: Detail => Unit) = list.foreach(_.action = action)
+
+  /** Запустить все станки */
+  def startAll() = list.foreach(_.start())
+
+  /** Остановить все станки */
+  def stopAll() = list.foreach(_.stop())
 }

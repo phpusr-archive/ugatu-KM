@@ -1,5 +1,7 @@
 package km.lab.two.detail
 
+import scala.collection.immutable.Queue
+
 /**
  * @author phpusr
  *         Date: 08.05.14
@@ -26,4 +28,14 @@ object DetailType {
 /**
  * Деталь
  */
-case class Detail(name: String, detailType: DetailType)
+case class Detail(name: String, detailType: DetailType) {
+  /** Очередь операций наод деталью */
+  private val operationQueue = new Queue[Operation](detailType.operations)
+
+  /** Выполнить операцию над деталью из очереди */
+  def operation() {
+    val op = operationQueue.dequeue._1
+    val handlingTime = op.handlingTime.get
+    Thread.sleep(handlingTime)
+  }
+}

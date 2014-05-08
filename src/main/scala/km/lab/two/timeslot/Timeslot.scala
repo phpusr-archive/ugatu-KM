@@ -9,4 +9,6 @@ package km.lab.two.timeslot
 /**
  * Временной интервал
  */
-case class Timeslot(defaultMinutes: Int, deltaMinutes: Int)
+case class Timeslot(defaultMinutes: Int, deltaMinutes: Int) {
+  def get = 10 //TODO сделать подсчет
+}

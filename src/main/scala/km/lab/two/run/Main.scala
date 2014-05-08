@@ -1,8 +1,9 @@
 package km.lab.two.run
 
 import km.lab.two.timeslot.Timeslot
-import km.lab.two.detail.{DetailType, Detail}
+import km.lab.two.detail.{DetailGenerator, DetailType, Detail}
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 /**
  * @author phpusr
@@ -15,19 +16,25 @@ import scala.collection.mutable
  */
 object Main extends App {
 
+  /** Очередь необработанных деталей */
   val detailQueue = mutable.Queue[Detail]()
 
-  val incomingIntervalTypeOne = Timeslot(15, 5)
-  var detailsCount = 0
-  val detailName = "Detail One"
-  while(true) {
-    detailsCount += 1
-    Thread.sleep(incomingIntervalTypeOne.get)
-    val detail = Detail(detailName + detailsCount, DetailType.V1)
+  /** Склад обработанных деталей */
+  val wareHouse = ListBuffer[Detail]()
+
+  /** Добавление детали в очередь */
+  val addDetailToQueue = (detail: Detail) => {
     detailQueue += detail
+    print() // Для того, чтобы тип был Unit
   }
 
-  //val incomingIntervalTypeTwo = Timeslot(35, 8)
+  // Поток деталей 1-го типа
+  val incomingIntervalTypeOne = Timeslot(15, 5)
+  val generatorV1 = new DetailGenerator(DetailType.V1, addDetailToQueue, incomingIntervalTypeOne)
+
+  // Поток деталей 2-го типа
+  val incomingIntervalTypeTwo = Timeslot(35, 8)
+  val generatorV2 = new DetailGenerator(DetailType.V2, addDetailToQueue, incomingIntervalTypeTwo)
 
   // Размещение деталей по станкам
   while(detailQueue.nonEmpty) {
@@ -37,6 +44,10 @@ object Main extends App {
     // Если есть следующая операция, то помещаем деталь в очередь станка, выполняющего эту операцию
     if (currentOperation.isDefined) currentOperation.get.machineTool.addDetail(detail)
     // Если нет, значти деталь обработана полностью, отправляем ее на склад
-    else ??? //TODO на склад
+    else addToWarehouse(detail)
   }
+
+  /** Добавить деталь на склад */
+  def addToWarehouse(detail: Detail) = wareHouse += detail
+
 }

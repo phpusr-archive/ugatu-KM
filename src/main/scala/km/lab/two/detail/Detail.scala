@@ -11,7 +11,7 @@ import scala.collection.immutable.Queue
 /**
  * Тип детали
  */
-case class DetailType(operations: Seq[Operation])
+case class DetailType(name: String, operations: Seq[Operation])
 
 /**
  * Типы деталей
@@ -20,9 +20,9 @@ object DetailType {
   import km.lab.two.detail.{Operation => Op}
 
   /** Деталь 1-о типа */
-  val V1 = DetailType(Seq(Op._1, Op._2, Op._3))
+  val V1 = DetailType("One", Seq(Op._1, Op._2, Op._3))
   /** Деталь 2-о типа */
-  val V2 = DetailType(Seq(Op._3, Op._4, Op._5))
+  val V2 = DetailType("Two", Seq(Op._3, Op._4, Op._5))
 }
 
 /**
@@ -41,4 +41,6 @@ case class Detail(name: String, detailType: DetailType) {
 
   /** Текущая операция */
   def currentOperation = if (operationQueue.nonEmpty) Option(operationQueue.head) else None
+
+  override def toString = s"$name type ${detailType.name}"
 }

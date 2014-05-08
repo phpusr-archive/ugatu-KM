@@ -32,9 +32,11 @@ case class MachineTool(name: String) {
       while (enable) {
         if (detailQueue.nonEmpty) {
           val currentDetail = detailQueue.dequeue()
-          logger.debug(s"$this processes $currentDetail")
+          logger.debug(s"${MachineTool.this} processes $currentDetail")
           currentDetail.operation()
           action(currentDetail)
+        } else {
+          Thread.sleep(100)
         }
       }
     }

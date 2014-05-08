@@ -22,18 +22,20 @@ object Main extends App {
   val Acceleration = 200
 
   /** Очередь необработанных деталей */
+  //TODO сделать потокобезопасной
   val detailQueue = mutable.Queue[Detail]()
 
   /** Склад обработанных деталей */
   val wareHouse = ListBuffer[Detail]()
 
   /** Logger */
-  val logger = new Logger(true, true, true)
+  val logger = new Logger(true, true, false)
 
   /** Добавление детали в очередь */
   val addDetailToQueue = (detail: Detail) => {
+    logger.debug(s"Add detail to queue: $detail")
     detailQueue += detail
-    print("") // Для того, чтобы тип был Unit
+    print("") //TODO Для того, чтобы тип был Unit
   }
 
   // Поток деталей 1-го типа
@@ -64,12 +66,15 @@ object Main extends App {
       }
       // Если нет, значти деталь обработана полностью, отправляем ее на склад
       else addToWarehouse(detail)
+    } else {
+      logger.trace("detailQueue empty")
+      Thread.sleep(500)
     }
   }
 
   /** Добавить деталь на склад */
   def addToWarehouse(detail: Detail) {
-    logger.debug(s"Add detail: $detail")
+    logger.debug(s"Add detail to warehouse: $detail")
     wareHouse += detail
   }
 

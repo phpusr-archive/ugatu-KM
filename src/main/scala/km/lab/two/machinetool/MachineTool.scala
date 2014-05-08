@@ -1,6 +1,6 @@
 package km.lab.two.machinetool
 
-import km.lab.two.detail.Detail
+import km.lab.two.detail.{GlobalQueue, Detail}
 import scala.collection.mutable
 
 /**
@@ -12,7 +12,7 @@ import scala.collection.mutable
 /**
  * Станок
  */
-case class MachineTool(name: String) {
+case class MachineTool(name: String, globalDetailQueue: GlobalQueue) {
   /** Включен или выключен станок */
   private val enable = false
 
@@ -30,7 +30,9 @@ case class MachineTool(name: String) {
       if (!detailQueue.isEmpty) {
         val currentDetail = detailQueue.dequeue()
         currentDetail.operation()
-        //TODO вернуть деталь в глобальную очередь
+
+        // Возвращаение детали в глобаольную очередь
+        globalDetailQueue += currentDetail
       }
     }
   }
@@ -40,7 +42,9 @@ case class MachineTool(name: String) {
  * Станки участка цеха
  */
 object MachineTool {
-  val A1 = MachineTool("A1")
-  val A2 = MachineTool("A2")
-  val A3 = MachineTool("A3")
+  val globalQueue = new GlobalQueue //TODO возможно нужно будет перенести
+
+  val A1 = MachineTool("A1", globalQueue)
+  val A2 = MachineTool("A2", globalQueue)
+  val A3 = MachineTool("A3", globalQueue)
 }

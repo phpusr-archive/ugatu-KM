@@ -25,3 +25,7 @@ class Timeslot(defaultMinutes: Int, deltaMinutes: Int) {
     milis
   }
 }
+
+object Timeslot {
+  def apply(defaultMinutes: Int, deltaMinutes: Int) = new Timeslot(defaultMinutes, deltaMinutes)
+}

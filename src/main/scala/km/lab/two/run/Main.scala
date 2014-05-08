@@ -32,12 +32,14 @@ object Main extends App {
   }
 
   // Поток деталей 1-го типа
-  val incomingIntervalTypeOne = new Timeslot(15, 5)
+  val incomingIntervalTypeOne = Timeslot(15, 5)
   val generatorV1 = new DetailGenerator(DetailType.V1, addDetailToQueue, incomingIntervalTypeOne)
+  generatorV1.start()
 
   // Поток деталей 2-го типа
-  val incomingIntervalTypeTwo = new Timeslot(35, 8)
+  val incomingIntervalTypeTwo = Timeslot(35, 8)
   val generatorV2 = new DetailGenerator(DetailType.V2, addDetailToQueue, incomingIntervalTypeTwo)
+  generatorV2.start()
 
   // Размещение деталей по станкам
   while(detailQueue.nonEmpty) {

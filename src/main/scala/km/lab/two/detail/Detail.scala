@@ -1,6 +1,6 @@
 package km.lab.two.detail
 
-import scala.collection.immutable.Queue
+import scala.collection.mutable
 
 /**
  * @author phpusr
@@ -30,11 +30,15 @@ object DetailType {
  */
 case class Detail(name: String, detailType: DetailType) {
   /** Очередь операций наод деталью */
-  private val operationQueue = new Queue[Operation](detailType.operations)
+  private val operationQueue = mutable.Queue[Operation]()
+
+  //---------------------- Init ----------------------//
+  detailType.operations.foreach(operationQueue +=)
+  //---------------------- End init ------------------//
 
   /** Выполнить операцию над деталью из очереди */
   def operation() {
-    val op = operationQueue.dequeue._1
+    val op = operationQueue.dequeue()
     val handlingTime = op.handlingTime.get
     Thread.sleep(handlingTime)
   }

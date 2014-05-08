@@ -30,6 +30,7 @@ case class MachineTool(name: String) {
   }
 
   /** Обработка деталей */
+  //TODO в отдельном потоке
   private def treatmentDetails() {
     while (enable) {
       if (!detailQueue.isEmpty) {

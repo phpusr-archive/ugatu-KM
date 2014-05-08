@@ -4,6 +4,7 @@ import km.lab.two.timeslot.Timeslot
 import km.lab.two.detail.{DetailGenerator, DetailType, Detail}
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
+import org.dyndns.phpusr.util.log.Logger
 
 /**
  * @author phpusr
@@ -17,7 +18,7 @@ import scala.collection.mutable.ListBuffer
 object Main extends App {
 
   /** Ускорение времени */
-  val Acceleration = 20
+  val Acceleration = 200
 
   /** Очередь необработанных деталей */
   val detailQueue = mutable.Queue[Detail]()
@@ -25,10 +26,13 @@ object Main extends App {
   /** Склад обработанных деталей */
   val wareHouse = ListBuffer[Detail]()
 
+  /** Logger */
+  val logger = new Logger(true, true, true)
+
   /** Добавление детали в очередь */
   val addDetailToQueue = (detail: Detail) => {
     detailQueue += detail
-    print() // Для того, чтобы тип был Unit
+    print("") // Для того, чтобы тип был Unit
   }
 
   // Поток деталей 1-го типа
@@ -47,12 +51,19 @@ object Main extends App {
     val currentOperation = detail.currentOperation
 
     // Если есть следующая операция, то помещаем деталь в очередь станка, выполняющего эту операцию
-    if (currentOperation.isDefined) currentOperation.get.machineTool.addDetail(detail)
+    if (currentOperation.isDefined) {
+      val machineTool = currentOperation.get.machineTool
+      logger.debug(s"Detail: $detail add to $machineTool")
+      machineTool.addDetail(detail)
+    }
     // Если нет, значти деталь обработана полностью, отправляем ее на склад
     else addToWarehouse(detail)
   }
 
   /** Добавить деталь на склад */
-  def addToWarehouse(detail: Detail) = wareHouse += detail
+  def addToWarehouse(detail: Detail) {
+    logger.debug(s"Add detail: $detail")
+    wareHouse += detail
+  }
 
 }

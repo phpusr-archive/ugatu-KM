@@ -86,4 +86,7 @@ object MachineTool {
 
   /** Остановить все станки */
   def stopAll() = list.foreach(_.stop())
+
+  /** Размеры очередей на станках */
+  def detailQueueSize = list.map(_.detailQueue.size)
 }

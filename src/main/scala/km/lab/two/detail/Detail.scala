@@ -22,7 +22,7 @@ object DetailType {
   /** Деталь 1-о типа */
   val V1 = DetailType("One", Seq(Op._1, Op._2, Op._3))
   /** Деталь 2-о типа */
-  val V2 = DetailType("Two", Seq(Op._3, Op._4, Op._5))
+  val V2 = DetailType("Two", Seq(Op._4, Op._5, Op._6))
 }
 
 /**

@@ -30,14 +30,15 @@ case class MachineTool(name: String) {
   private val handler = new Thread(new Runnable {
     override def run() {
       while (enable) {
-        if (detailQueue.nonEmpty) {
-          val currentDetail = detailQueue.dequeue()
-          logger.debug(s"${MachineTool.this} processes $currentDetail")
-          currentDetail.operation()
-          action(currentDetail)
-        } else {
-          Thread.sleep(100)
+        detailQueue.synchronized {
+          if (detailQueue.nonEmpty) {
+            val currentDetail = detailQueue.dequeue()
+            logger.debug(s"${MachineTool.this} processes $currentDetail")
+            currentDetail.operation()
+            action(currentDetail)
+          }
         }
+        Thread.sleep(500)
       }
     }
   })
@@ -48,7 +49,7 @@ case class MachineTool(name: String) {
   //def act_= (a: Detail => Unit): Unit = action = a
 
   /** Добавление детали в очередь */
-  def addDetail(detail: Detail) {
+  def addDetail(detail: Detail) = synchronized {
     logger.debug(s"$this add $detail")
     detailQueue += detail
   }

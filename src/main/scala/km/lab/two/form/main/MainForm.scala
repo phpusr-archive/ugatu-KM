@@ -19,6 +19,8 @@ object MainForm extends SimpleSwingApplication {
   private val warehouuseDetailCountLabel = defaultLabel()
   /** Лейбл кол-ва всего поступленных деталей */
   private val generateDetailCountLabel = defaultLabel()
+  //TODO
+  private val detailQueueSizeLabel = defaultLabel()
 
   // Очередь в станках
   private val machineToolsQueueSizeList = for (i <- 1 to 3) yield defaultLabel()
@@ -37,6 +39,10 @@ object MainForm extends SimpleSwingApplication {
       c.gridy = 1
       layout(new Label("All generate detail:")) = c
       layout(generateDetailCountLabel) = c
+
+      c.gridy = 2
+      layout(new Label("Detail queue:")) = c
+      layout(detailQueueSizeLabel) = c
 
       for (i <- 0 until machineToolsQueueSizeList.size) {
         c.gridx = 2
@@ -61,15 +67,16 @@ object MainForm extends SimpleSwingApplication {
       while (true) {
         Thread.sleep(100)
         warehouuseDetailCountLabel.text = main.warehouse.size.toString
-        generateDetailCountLabel.text = main.generateDetailCount.toString
+        generateDetailCountLabel.text = main.generateDetailCount.toString + " " + main.generateDetailCountAtomic.get().toString
+        detailQueueSizeLabel.text = main.detailQueue.size.toString
 
-        println(main.warehouseDetailQueueSize)
         main.warehouseDetailQueueSize.zipWithIndex.foreach{case (x, i) =>
           machineToolsQueueSizeList(i).text = x.toString
         }
 
         if (main.generateDetailCount >= 30) {
           main.stopGenerateDetail()
+          println(">>END PROGRAMM")
         }
       }
     }

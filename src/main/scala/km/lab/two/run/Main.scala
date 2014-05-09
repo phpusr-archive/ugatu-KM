@@ -6,6 +6,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import org.dyndns.phpusr.util.log.Logger
 import km.lab.two.machinetool.MachineTool
+import java.util.concurrent.atomic.AtomicInteger
 
 /**
  * @author phpusr
@@ -41,13 +42,14 @@ class Main extends Thread {
   /** Всего сгенерировано деталей */
   // TODO readonly
   var generateDetailCount = 0
+  var generateDetailCountAtomic = new AtomicInteger(0)
 
   /** Добавление детали в очередь */
-  val addDetailToQueue = (detail: Detail) => {
+  def addDetailToQueue(detail: Detail): Unit = synchronized {
     logger.debug(s"Add detail to queue: $detail")
     generateDetailCount += 1
+    generateDetailCountAtomic.getAndAdd(1)
     detailQueue += detail
-    print("") //TODO Для того, чтобы тип был Unit
   }
 
   // Поток деталей 1-го типа
@@ -67,23 +69,25 @@ class Main extends Thread {
 
     // Размещение деталей по станкам
     while(true) {
-      if (detailQueue.nonEmpty) {
-        val detail = detailQueue.dequeue()
-        val currentOperation = detail.currentOperation
+      detailQueue.synchronized {
+        if (detailQueue.nonEmpty) {
+          val detail = detailQueue.dequeue()
+          val currentOperation = detail.currentOperation
 
-        // Если есть следующая операция, то помещаем деталь в очередь станка, выполняющего эту операцию
-        if (currentOperation.isDefined) {
-          val machineTool = currentOperation.get.machineTool
-          logger.debug(s"Detail: $detail add to $machineTool")
-          //TODO сделать потокобезопасным
-          machineTool.addDetail(detail)
+          // Если есть следующая операция, то помещаем деталь в очередь станка, выполняющего эту операцию
+          if (currentOperation.isDefined) {
+            val machineTool = currentOperation.get.machineTool
+            logger.debug(s"Detail: $detail add to $machineTool")
+            //TODO сделать потокобезопасным
+            machineTool.addDetail(detail)
+          }
+          // Если нет, значти деталь обработана полностью, отправляем ее на склад
+          else addToWarehouse(detail)
+        } else {
+          logger.trace("detailQueue empty")
         }
-        // Если нет, значти деталь обработана полностью, отправляем ее на склад
-        else addToWarehouse(detail)
-      } else {
-        logger.trace("detailQueue empty")
-        Thread.sleep(500)
       }
+      Thread.sleep(500)
     }
   }
 

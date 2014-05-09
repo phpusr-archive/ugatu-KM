@@ -2,6 +2,7 @@ package km.lab.two.detail
 
 import km.lab.two.timeslot.Timeslot
 import org.dyndns.phpusr.util.log.Logger
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * @author phpusr
@@ -15,7 +16,7 @@ import org.dyndns.phpusr.util.log.Logger
 class DetailGenerator(detailType: DetailType, action: Detail => Unit, incomingInterval: Timeslot) {
 
   /** Флаг работы генератора */
-  private var work = false
+  private val work = new AtomicBoolean(false)
 
   /** Logger */
   val logger = new Logger(true, true, true)
@@ -25,7 +26,7 @@ class DetailGenerator(detailType: DetailType, action: Detail => Unit, incomingIn
     override def run() {
       val detailName = "Detail"
       var detailIndex = 0
-      while (work) {
+      while (work.get()) { //TODO почему-то не останавливается
         detailIndex += 1
         val incomingMilis = incomingInterval.get
         logger.debug(s"Incoming interval: ${incomingMilis/1000} s.")
@@ -42,13 +43,13 @@ class DetailGenerator(detailType: DetailType, action: Detail => Unit, incomingIn
   /** Генерация деталей */
   def start() {
     logger.debug("DetailGenerator start")
-    work = true
+    work.set(true)
     generator.start()
   }
 
   /** Остновка генерации деталей */
   def stop() {
-    work = false
+    work.set(false)
   }
 
 }

@@ -42,7 +42,9 @@ class Main extends Thread {
   /** Всего сгенерировано деталей */
   // TODO readonly
   var generateDetailCount = 0
-  var generateDetailCountAtomic = new AtomicInteger(0)
+  val generateDetailCountAtomic = new AtomicInteger(0)
+
+  val dequeCount = new AtomicInteger(0)
 
   /** Добавление детали в очередь */
   def addDetailToQueue(detail: Detail): Unit = synchronized {
@@ -71,6 +73,7 @@ class Main extends Thread {
     while(true) {
       detailQueue.synchronized {
         if (detailQueue.nonEmpty) {
+          dequeCount.getAndAdd(1)
           val detail = detailQueue.dequeue()
           val currentOperation = detail.currentOperation
 

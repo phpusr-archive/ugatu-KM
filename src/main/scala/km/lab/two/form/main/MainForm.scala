@@ -2,7 +2,7 @@ package km.lab.two.form.main
 
 import scala.swing.{Label, GridBagPanel, MainFrame, SimpleSwingApplication}
 import java.awt.{Insets, Dimension}
-import km.lab.two.run.Main
+import km.lab.two.workshop.Workshop
 
 /**
  * @author phpusr
@@ -58,7 +58,7 @@ object MainForm extends SimpleSwingApplication {
   }
 
   // Запуск генерации и обработки деталей
-  val main = new Main
+  val main = new Workshop
   main.start()
 
   // Снятие показаний со станков

@@ -1,4 +1,4 @@
-package km.lab.two.run
+package km.lab.two.workshop
 
 import km.lab.two.timeslot.Timeslot
 import km.lab.two.detail.{DetailGenerator, DetailType, Detail}
@@ -14,18 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger
  *         Time: 14:06
  */
 
-object Main {
-
-  /** Ускорение времени */
-  val Acceleration = 600
-
-}
-
 /**
- *
+ * Мастерская
  */
-//TODO
-class Main extends Thread {
+class Workshop extends Thread {
 
   /** Очередь необработанных деталей */
   val detailQueue = mutable.Queue[Detail]()
@@ -34,7 +26,7 @@ class Main extends Thread {
   val warehouse = ListBuffer[Detail]()
 
   /** Logger */
-  val logger = new Logger(true, true, false)
+  private val logger = new Logger(true, true, false)
 
   /** Всего сгенерировано деталей */
   val generateDetailCount = new AtomicInteger(0)
@@ -47,13 +39,15 @@ class Main extends Thread {
   }
 
   // Поток деталей 1-го типа
-  val incomingIntervalTypeOne = Timeslot(15, 5)
-  val generatorV1 = new DetailGenerator(DetailType.V1, addDetailToQueue, incomingIntervalTypeOne)
+  private val incomingIntervalTypeOne = Timeslot(15, 5)
+  private val generatorV1 = new DetailGenerator(DetailType.V1, addDetailToQueue, incomingIntervalTypeOne)
   // Поток деталей 2-го типа
-  val incomingIntervalTypeTwo = Timeslot(35, 8)
-  val generatorV2 = new DetailGenerator(DetailType.V2, addDetailToQueue, incomingIntervalTypeTwo)
+  private val incomingIntervalTypeTwo = Timeslot(35, 8)
+  private val generatorV2 = new DetailGenerator(DetailType.V2, addDetailToQueue, incomingIntervalTypeTwo)
 
+  /** Запуск поставки и обработки деталей */
   override def run() {
+    // Запуск поставки деталей
     generatorV1.start()
     generatorV2.start()
 
@@ -89,7 +83,7 @@ class Main extends Thread {
   }
 
   /** Добавить деталь на склад */
-  def addToWarehouse(detail: Detail) {
+  private def addToWarehouse(detail: Detail) {
     logger.debug(s"Add detail to warehouse: $detail")
     warehouse += detail
   }

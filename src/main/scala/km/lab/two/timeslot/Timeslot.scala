@@ -1,7 +1,7 @@
 package km.lab.two.timeslot
 
 import scala.util.Random
-import km.lab.two.run.Main
+import km.lab.two.constants.Const
 
 /**
  * @author phpusr
@@ -15,7 +15,7 @@ import km.lab.two.run.Main
 class Timeslot(defaultMinutes: Int, deltaMinutes: Int) {
 
   /** Ускорение времени */
-  private def acceleration = Main.Acceleration
+  private def acceleration = Const.Acceleration
 
   /** Интервал в милисекундах */
   def get = {

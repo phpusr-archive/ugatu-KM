@@ -7,7 +7,6 @@ import scala.collection.mutable.ListBuffer
 import org.dyndns.phpusr.util.log.Logger
 import km.lab.two.machinetool.MachineTool
 import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
-import java.awt.event.ActionListener
 import java.util.{Date, TimerTask, Timer}
 import km.lab.two.constants.Const
 
@@ -86,7 +85,7 @@ class Workshop(workHours: Int) extends Thread {
           else addToWarehouse(detail)
         }
       }
-      Thread.sleep(500)
+      Thread.sleep(Const.ThreadSleepMilis)
     }
   }
 

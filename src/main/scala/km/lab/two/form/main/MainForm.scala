@@ -83,7 +83,7 @@ object MainForm extends SimpleSwingApplication {
 
   // Снятие показаний со станков
   new Thread(new Runnable {
-    override def run() = {
+    override def run() {
       while (main.enable.get) {
 
         warehouuseDetailCountLabel.text = main.warehouse.size.toString
@@ -100,8 +100,7 @@ object MainForm extends SimpleSwingApplication {
           machineToolsQueueSizeList(i).text = s"${x._1} (${x._2})"
         }
 
-        Thread.sleep(1)
-
+        Thread.sleep(Const.ThreadSleepMilis)
       }
     }
   }).start()

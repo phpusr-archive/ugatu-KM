@@ -14,4 +14,7 @@ object Const {
   /** Ускорение времени */
   val Acceleration = 6000
 
+  /** Время засыпания потоков */
+  val ThreadSleepMilis = 1
+
 }

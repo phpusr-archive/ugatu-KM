@@ -4,6 +4,7 @@ import scala.collection.mutable
 import km.lab.two.detail.Detail
 import org.dyndns.phpusr.util.log.Logger
 import java.util.concurrent.atomic.AtomicBoolean
+import km.lab.two.constants.Const
 
 /**
  * @author phpusr
@@ -43,7 +44,7 @@ class MachineTool(name: String) {
             action(currentDetail, false)
           }
         }
-        Thread.sleep(100)
+        Thread.sleep(Const.ThreadSleepMilis)
       }
     }
   })

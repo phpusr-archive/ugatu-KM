@@ -97,7 +97,7 @@ object MainForm extends SimpleSwingApplication {
         workedTimeLabel.text = milisToHours(main.workedTime)
 
         main.machineToolDetailQueueSize.zipWithIndex.foreach{case (x, i) =>
-          machineToolsQueueSizeList(i).text = s"${x._1} (${x._2})"
+          machineToolsQueueSizeList(i).text = s"${x._1} (${x._2}) (${x._3 formatted "%.2f"})"
         }
 
         Thread.sleep(100)

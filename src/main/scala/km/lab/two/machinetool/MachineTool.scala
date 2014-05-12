@@ -5,6 +5,7 @@ import km.lab.two.detail.Detail
 import org.dyndns.phpusr.util.log.Logger
 import java.util.concurrent.atomic.AtomicBoolean
 import km.lab.two.constants.Const
+import org.dyndns.phpusr.util.stat.Stat
 
 /**
  * @author phpusr
@@ -43,11 +44,18 @@ class MachineTool(name: String) {
             currentDetail.operation { v => buzyState.set(false) }
             action(currentDetail, false)
           }
+
+          // Подсчет средней загрузки станка
+          avgLoad.newElement()
+          avgLoad.add(detailQueue.size)
         }
         Thread.sleep(Const.ThreadSleepMilis)
       }
     }
   })
+
+  /** Средняя загрузка станка */
+  private val avgLoad = new Stat
 
   //--------------------------------------------------
 
@@ -94,5 +102,5 @@ object MachineTool {
   def stopAll() = list.foreach(_.stop())
 
   /** Размеры очередей на станках */
-  def detailQueueSize = list.map(e => (e.detailQueue.size, if (e.buzyState.get) 1 else 0))
+  def detailQueueSize = list.map(e => (e.detailQueue.size, if (e.buzyState.get) 1 else 0, e.avgLoad.avg))
 }

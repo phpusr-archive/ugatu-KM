@@ -100,15 +100,15 @@ object MainForm extends SimpleSwingApplication {
           machineToolsQueueSizeList(i).text = s"${x._1} (${x._2})"
         }
 
-        Thread.sleep(Const.ThreadSleepMilis)
+        Thread.sleep(100)
       }
     }
   }).start()
 
   /** мс. -> мин. (с учетом ускорения времени) */
-  private def milisToMinutes(milis: Long) = (milis * Const.Acceleration / 1000 / 60).toString + " min"
+  private def milisToMinutes(milis: Long) = Math.round(milis.toFloat * Const.Acceleration / 1000 / 60).toString + " min"
 
   /** мс. -> ч. (с учетом ускорения времени) */
-  private def milisToHours(milis: Long) = (milis * Const.Acceleration / 1000 / 60 / 60).toString + " h"
+  private def milisToHours(milis: Long) = Math.round(milis.toFloat * Const.Acceleration / 1000 / 60 / 60).toString + " h"
 
 }

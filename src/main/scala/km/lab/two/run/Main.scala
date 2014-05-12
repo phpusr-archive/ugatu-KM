@@ -22,8 +22,9 @@ object Main {
 }
 
 /**
- * TODO
+ *
  */
+//TODO
 class Main extends Thread {
 
   /** Очередь необработанных деталей */

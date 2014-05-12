@@ -19,7 +19,7 @@ object MainForm extends SimpleSwingApplication {
   private val warehouuseDetailCountLabel = defaultLabel()
   /** Лейбл кол-ва всего поступленных деталей */
   private val generateDetailCountLabel = defaultLabel()
-  //TODO
+  /** Лейбл размера очереди распределения деталей */
   private val detailQueueSizeLabel = defaultLabel()
 
   // Очередь в станках

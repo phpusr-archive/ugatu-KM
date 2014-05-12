@@ -14,9 +14,9 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * Станок
  */
-case class MachineTool(name: String) {
+class MachineTool(name: String) {
   /** Включен или выключен станок */
-  private var enable = false
+  private val enable = new AtomicBoolean(false)
 
   /** Очередь деталей */
   private val detailQueue = mutable.Queue[Detail]()
@@ -25,15 +25,15 @@ case class MachineTool(name: String) {
   private var action: (Detail, Boolean) => Unit = null
 
   /** Logger */
-  val logger = new Logger(true, true, true)
+  private val logger = new Logger(true, true, true)
 
   /** Состояние занятости станка */
-  val buzyState = new AtomicBoolean(false)
+  private val buzyState = new AtomicBoolean(false)
 
   /** Обработчик деталей */
   private val handler = new Thread(new Runnable {
     override def run() {
-      while (enable) {
+      while (enable.get) {
         detailQueue.synchronized {
           if (detailQueue.nonEmpty) {
             buzyState.set(true)
@@ -59,14 +59,14 @@ case class MachineTool(name: String) {
   /** Запуск станка */
   def start() {
     logger.debug(s"Start $this")
-    enable = true
+    enable.set(true)
     handler.start()
   }
 
   /** Остановка станка */
   def stop() {
     logger.debug(s"Stop $this")
-    enable = false
+    enable.set(false)
   }
 
 }
@@ -75,6 +75,8 @@ case class MachineTool(name: String) {
  * Станки участка цеха
  */
 object MachineTool {
+  def apply(name: String) = new MachineTool(name)
+
   val A1 = MachineTool("A1")
   val A2 = MachineTool("A2")
   val A3 = MachineTool("A3")

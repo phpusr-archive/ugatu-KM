@@ -3,6 +3,7 @@ package km.lab.two.machinetool
 import scala.collection.mutable
 import km.lab.two.detail.Detail
 import org.dyndns.phpusr.util.log.Logger
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * @author phpusr
@@ -26,15 +27,19 @@ case class MachineTool(name: String) {
   /** Logger */
   val logger = new Logger(true, true, true)
 
+  /** Состояние занятости станка */
+  val buzyState = new AtomicBoolean(false)
+
   /** Обработчик деталей */
   private val handler = new Thread(new Runnable {
     override def run() {
       while (enable) {
         detailQueue.synchronized {
           if (detailQueue.nonEmpty) {
+            buzyState.set(true)
             val currentDetail = detailQueue.dequeue()
             logger.debug(s"${MachineTool.this} processes $currentDetail")
-            currentDetail.operation()
+            currentDetail.operation { v => buzyState.set(false) }
             action(currentDetail, false)
           }
         }
@@ -86,5 +91,5 @@ object MachineTool {
   def stopAll() = list.foreach(_.stop())
 
   /** Размеры очередей на станках */
-  def detailQueueSize = list.map(_.detailQueue.size)
+  def detailQueueSize = list.map(e => (e.detailQueue.size, if (e.buzyState.get) 1 else 0))
 }

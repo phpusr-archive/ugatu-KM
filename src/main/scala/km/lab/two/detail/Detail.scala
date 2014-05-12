@@ -37,10 +37,11 @@ case class Detail(name: String, detailType: DetailType) {
   //---------------------- End init ------------------//
 
   /** Выполнить операцию над деталью из очереди */
-  def operation() {
+  def operation(action: Unit => Unit) {
     val op = operationQueue.dequeue()
     val handlingTime = op.handlingTime.get
     Thread.sleep(handlingTime)
+    action()
   }
 
   /** Текущая операция */

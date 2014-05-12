@@ -21,8 +21,6 @@ object MainForm extends SimpleSwingApplication {
   private val generateDetailCountLabel = defaultLabel()
   //TODO
   private val detailQueueSizeLabel = defaultLabel()
-  // Кол-во извлеченных из очереди деталей
-  private val dequeDetailCountLabel = defaultLabel()
 
   // Очередь в станках
   private val machineToolsQueueSizeList = for (i <- 1 to 3) yield defaultLabel()
@@ -43,10 +41,6 @@ object MainForm extends SimpleSwingApplication {
       layout(generateDetailCountLabel) = c
 
       c.gridy = 2
-      layout(new Label("Deque detail:")) = c
-      layout(dequeDetailCountLabel) = c
-
-      c.gridy = 3
       layout(new Label("Detail queue:")) = c
       layout(detailQueueSizeLabel) = c
 
@@ -79,10 +73,8 @@ object MainForm extends SimpleSwingApplication {
         generateDetailCountLabel.text = main.generateDetailCount.toString
         detailQueueSizeLabel.text = main.detailQueue.size.toString
 
-        dequeDetailCountLabel.text = main.dequeCount.toString
-
-        main.warehouseDetailQueueSize.zipWithIndex.foreach{case (x, i) =>
-          machineToolsQueueSizeList(i).text = x.toString
+        main.machineToolDetailQueueSize.zipWithIndex.foreach{case (x, i) =>
+          machineToolsQueueSizeList(i).text = s"${x._1} (${x._2})"
         }
 
         Thread.sleep(1)

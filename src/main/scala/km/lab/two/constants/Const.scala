@@ -12,6 +12,6 @@ package km.lab.two.constants
 object Const {
 
   /** Ускорение времени */
-  val Acceleration = 600
+  val Acceleration = 6000
 
 }

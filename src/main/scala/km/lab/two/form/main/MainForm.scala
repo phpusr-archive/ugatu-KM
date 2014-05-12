@@ -30,6 +30,9 @@ object MainForm extends SimpleSwingApplication {
   // Очередь в станках
   private val machineToolsQueueSizeList = for (i <- 1 to 3) yield defaultLabel()
 
+  /** Время работы мастерской */
+  private val workedTimeLabel = defaultLabel()
+
   // Компоненты по умолчанию
   private def defaultLabel() = new Label("0")
 
@@ -49,13 +52,17 @@ object MainForm extends SimpleSwingApplication {
       layout(new Label("Warehouse:")) = c
       layout(warehouuseDetailCountLabel) = c
 
-      c.gridy = 4
+      c.gridy = 3
       layout(new Label("Avg detail V1 handler time:")) = c
       layout(avgDetailHandlerTimeV1Label) = c
 
-      c.gridy = 5
+      c.gridy = 4
       layout(new Label("Avg detail V2 handler time:")) = c
       layout(avgDetailHandlerTimeV2Label) = c
+
+      c.gridy = 5
+      layout(new Label("Worked time")) = c
+      layout(workedTimeLabel) = c
 
       for (i <- 0 until machineToolsQueueSizeList.size) {
         c.gridx = 2
@@ -71,16 +78,13 @@ object MainForm extends SimpleSwingApplication {
   }
 
   // Запуск генерации и обработки деталей
-  val main = new Workshop
+  val main = new Workshop(10)
   main.start()
 
   // Снятие показаний со станков
   new Thread(new Runnable {
     override def run() = {
-      while (true) {
-        if (main.generateDetailCount.get >= 5) {
-          main.stopGenerateDetail()
-        }
+      while (main.enable.get) {
 
         warehouuseDetailCountLabel.text = main.warehouse.size.toString
         generateDetailCountLabel.text = main.generateDetailCount.toString
@@ -89,6 +93,8 @@ object MainForm extends SimpleSwingApplication {
         val avgDetailHandlerTime = main.avgDetailHandlerTime
         avgDetailHandlerTimeV1Label.text = milisToMinutes(avgDetailHandlerTime._1)
         avgDetailHandlerTimeV2Label.text = milisToMinutes(avgDetailHandlerTime._2)
+
+        workedTimeLabel.text = milisToHours(main.workedTime)
 
         main.machineToolDetailQueueSize.zipWithIndex.foreach{case (x, i) =>
           machineToolsQueueSizeList(i).text = s"${x._1} (${x._2})"
@@ -102,5 +108,8 @@ object MainForm extends SimpleSwingApplication {
 
   /** мс. -> мин. (с учетом ускорения времени) */
   private def milisToMinutes(milis: Long) = (milis * Const.Acceleration / 1000 / 60).toString + " min"
+
+  /** мс. -> ч. (с учетом ускорения времени) */
+  private def milisToHours(milis: Long) = (milis * Const.Acceleration / 1000 / 60 / 60).toString + " h"
 
 }

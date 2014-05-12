@@ -6,7 +6,10 @@ import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 import org.dyndns.phpusr.util.log.Logger
 import km.lab.two.machinetool.MachineTool
-import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.{AtomicBoolean, AtomicInteger}
+import java.awt.event.ActionListener
+import java.util.{Date, TimerTask, Timer}
+import km.lab.two.constants.Const
 
 /**
  * @author phpusr
@@ -17,7 +20,10 @@ import java.util.concurrent.atomic.AtomicInteger
 /**
  * Мастерская
  */
-class Workshop extends Thread {
+class Workshop(workHours: Int) extends Thread {
+
+  /** Состояние работы мастерской */
+  val enable = new AtomicBoolean(true)
 
   /** Очередь необработанных деталей */
   val detailQueue = mutable.Queue[Detail]()
@@ -45,8 +51,16 @@ class Workshop extends Thread {
   private val incomingIntervalTypeTwo = Timeslot(35, 8)
   private val generatorV2 = new DetailGenerator(DetailType.V2, addDetailToQueue, incomingIntervalTypeTwo)
 
+  /** Время начало работы */
+  private var startDate: Date = null
+
+  /** Отработанное время (мс.) */
+  def workedTime = new Date().getTime - startDate.getTime
+
   /** Запуск поставки и обработки деталей */
   override def run() {
+    startDate = new Date()
+
     // Запуск поставки деталей
     generatorV1.start()
     generatorV2.start()
@@ -56,7 +70,7 @@ class Workshop extends Thread {
     MachineTool.startAll()
 
     // Размещение деталей по станкам
-    while(true) {
+    while(enable.get) {
       detailQueue.synchronized {
         if (detailQueue.nonEmpty) {
           val detail = detailQueue.dequeue()
@@ -75,6 +89,17 @@ class Workshop extends Thread {
       Thread.sleep(500)
     }
   }
+
+  // Время работы мастерской
+  private val endDate = new Date(new Date().getTime + (workHours * 60 * 60 * 1000 / Const.Acceleration))
+  new Timer().schedule(new TimerTask {
+    override def run() {
+      logger.debug("Switch off workshop")
+      stopGenerateDetail()
+      MachineTool.stopAll()
+      enable.set(false)
+    }
+  }, endDate)
 
   /** Остановка поставки деталей */
   def stopGenerateDetail() {

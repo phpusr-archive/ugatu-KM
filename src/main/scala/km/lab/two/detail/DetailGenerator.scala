@@ -32,7 +32,7 @@ class DetailGenerator(detailType: DetailType, action: (Detail, Boolean) => Unit,
         logger.debug(s"Incoming interval: ${incomingMilis/1000} s.")
 
         Thread.sleep(incomingMilis)
-        val detail = Detail(s"$detailName-$detailIndex", DetailType.V1)
+        val detail = Detail(s"$detailName-$detailIndex", detailType)
         logger.debug(s"DetailGenerator generate detail: $detail")
 
         action(detail, true)

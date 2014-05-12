@@ -1,6 +1,7 @@
 package km.lab.two.detail
 
 import scala.collection.mutable
+import java.util.Date
 
 /**
  * @author phpusr
@@ -32,6 +33,12 @@ case class Detail(name: String, detailType: DetailType) {
   /** Очередь операций наод деталью */
   private val operationQueue = mutable.Queue[Operation]()
 
+  /** Дата создания детали */
+  private val createDate = new Date()
+
+  /** Время обработки (мс.) */
+  var handlerTime = 0L
+
   //---------------------- Init ----------------------//
   detailType.operations.foreach(operationQueue +=)
   //---------------------- End init ------------------//
@@ -46,6 +53,9 @@ case class Detail(name: String, detailType: DetailType) {
 
   /** Текущая операция */
   def currentOperation = if (operationQueue.nonEmpty) Option(operationQueue.head) else None
+
+  /** Подсчитать время обработки */
+  def calcHandlerTime() = handlerTime = new Date().getTime - createDate.getTime
 
   override def toString = s"$name type ${detailType.name}"
 }

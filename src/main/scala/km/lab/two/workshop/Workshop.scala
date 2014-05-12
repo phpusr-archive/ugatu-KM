@@ -85,10 +85,24 @@ class Workshop extends Thread {
   /** Добавить деталь на склад */
   private def addToWarehouse(detail: Detail) {
     logger.debug(s"Add detail to warehouse: $detail")
+    detail.calcHandlerTime()
     warehouse += detail
   }
 
   /** Размеры очередей на станках */
   def machineToolDetailQueueSize = MachineTool.detailQueueSize
+
+  /** Среднее время обработки деталей каждого типа (мс.) */
+  def avgDetailHandlerTime = {
+    val v1 = avgDetailHandlerTimeByType(DetailType.V1)
+    val v2 = avgDetailHandlerTimeByType(DetailType.V2)
+    (v1, v2)
+  }
+
+  /** Среднее время обработки деталей по типу (мс.) */
+  private def avgDetailHandlerTimeByType(detailType: DetailType) = {
+    val handlerTimes = warehouse.filter(_.detailType == detailType).map(_.handlerTime)
+    handlerTimes.sum.toDouble / handlerTimes.size
+  }
 
 }

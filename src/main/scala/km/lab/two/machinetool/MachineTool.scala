@@ -35,7 +35,7 @@ class MachineTool(name: String) {
     override def run() {
       while (enable.get) {
         detailQueue.synchronized {
-          if (detailQueue.nonEmpty) {
+          if (detailQueue.nonEmpty && !buzyState.get) {
             buzyState.set(true)
             val currentDetail = detailQueue.dequeue()
             logger.debug(s"${MachineTool.this} processes $currentDetail")

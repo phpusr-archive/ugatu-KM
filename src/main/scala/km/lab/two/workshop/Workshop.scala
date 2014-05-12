@@ -96,7 +96,7 @@ class Workshop extends Thread {
   def avgDetailHandlerTime = {
     val v1 = avgDetailHandlerTimeByType(DetailType.V1)
     val v2 = avgDetailHandlerTimeByType(DetailType.V2)
-    (v1, v2)
+    (v1.toLong, v2.toLong)
   }
 
   /** Среднее время обработки деталей по типу (мс.) */

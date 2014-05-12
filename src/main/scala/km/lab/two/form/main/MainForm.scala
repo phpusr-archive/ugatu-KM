@@ -3,6 +3,7 @@ package km.lab.two.form.main
 import scala.swing.{Label, GridBagPanel, MainFrame, SimpleSwingApplication}
 import java.awt.{Insets, Dimension}
 import km.lab.two.workshop.Workshop
+import km.lab.two.constants.Const
 
 /**
  * @author phpusr
@@ -49,11 +50,11 @@ object MainForm extends SimpleSwingApplication {
       layout(warehouuseDetailCountLabel) = c
 
       c.gridy = 4
-      layout(new Label("Avg detail V1 handler time")) = c
+      layout(new Label("Avg detail V1 handler time:")) = c
       layout(avgDetailHandlerTimeV1Label) = c
 
       c.gridy = 5
-      layout(new Label("Avg detail V2 handler time")) = c
+      layout(new Label("Avg detail V2 handler time:")) = c
       layout(avgDetailHandlerTimeV2Label) = c
 
       for (i <- 0 until machineToolsQueueSizeList.size) {
@@ -86,8 +87,8 @@ object MainForm extends SimpleSwingApplication {
         detailQueueSizeLabel.text = main.detailQueue.size.toString
 
         val avgDetailHandlerTime = main.avgDetailHandlerTime
-        avgDetailHandlerTimeV1Label.text = avgDetailHandlerTime._1.toString
-        avgDetailHandlerTimeV2Label.text = avgDetailHandlerTime._2.toString
+        avgDetailHandlerTimeV1Label.text = milisToMinutes(avgDetailHandlerTime._1)
+        avgDetailHandlerTimeV2Label.text = milisToMinutes(avgDetailHandlerTime._2)
 
         main.machineToolDetailQueueSize.zipWithIndex.foreach{case (x, i) =>
           machineToolsQueueSizeList(i).text = s"${x._1} (${x._2})"
@@ -98,5 +99,8 @@ object MainForm extends SimpleSwingApplication {
       }
     }
   }).start()
+
+  /** мс. -> мин. (с учетом ускорения времени) */
+  private def milisToMinutes(milis: Long) = (milis * Const.Acceleration / 1000 / 60).toString + " min"
 
 }

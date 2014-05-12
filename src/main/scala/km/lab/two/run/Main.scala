@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger
 object Main {
 
   /** Ускорение времени */
-  val Acceleration = 200
+  val Acceleration = 600
 
 }
 
@@ -26,11 +26,7 @@ object Main {
  */
 class Main extends Thread {
 
-  /** Ускорение времени */
-  val Acceleration = 200
-
   /** Очередь необработанных деталей */
-  //TODO сделать потокобезопасной
   val detailQueue = mutable.Queue[Detail]()
 
   /** Склад обработанных деталей */
@@ -40,17 +36,15 @@ class Main extends Thread {
   val logger = new Logger(true, true, false)
 
   /** Всего сгенерировано деталей */
-  // TODO readonly
-  var generateDetailCount = 0
-  val generateDetailCountAtomic = new AtomicInteger(0)
+  val generateDetailCount = new AtomicInteger(0)
 
+  /** Кол-во извлеченных деталей из очереди */ //TODO remove
   val dequeCount = new AtomicInteger(0)
 
   /** Добавление детали в очередь */
-  def addDetailToQueue(detail: Detail): Unit = synchronized {
+  def addDetailToQueue(detail: Detail, isGenerate: Boolean): Unit = synchronized {
     logger.debug(s"Add detail to queue: $detail")
-    generateDetailCount += 1
-    generateDetailCountAtomic.getAndAdd(1)
+    if (isGenerate) generateDetailCount.getAndAdd(1)
     detailQueue += detail
   }
 
@@ -81,13 +75,10 @@ class Main extends Thread {
           if (currentOperation.isDefined) {
             val machineTool = currentOperation.get.machineTool
             logger.debug(s"Detail: $detail add to $machineTool")
-            //TODO сделать потокобезопасным
             machineTool.addDetail(detail)
           }
-          // Если нет, значти деталь обработана полностью, отправляем ее на склад
+          // Если нет, значит деталь обработана полностью, отправляем ее на склад
           else addToWarehouse(detail)
-        } else {
-          logger.trace("detailQueue empty")
         }
       }
       Thread.sleep(500)
@@ -96,7 +87,6 @@ class Main extends Thread {
 
   /** Остановка поставки деталей */
   def stopGenerateDetail() {
-    //TODO not work
     generatorV1.stop()
     generatorV2.stop()
   }

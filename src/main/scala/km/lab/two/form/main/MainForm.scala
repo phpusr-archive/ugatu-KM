@@ -71,9 +71,12 @@ object MainForm extends SimpleSwingApplication {
   new Thread(new Runnable {
     override def run() = {
       while (true) {
-        Thread.sleep(100)
+        if (main.generateDetailCount.get >= 5) {
+          main.stopGenerateDetail()
+        }
+
         warehouuseDetailCountLabel.text = main.warehouse.size.toString
-        generateDetailCountLabel.text = main.generateDetailCount.toString + " " + main.generateDetailCountAtomic.get().toString
+        generateDetailCountLabel.text = main.generateDetailCount.toString
         detailQueueSizeLabel.text = main.detailQueue.size.toString
 
         dequeDetailCountLabel.text = main.dequeCount.toString
@@ -82,10 +85,8 @@ object MainForm extends SimpleSwingApplication {
           machineToolsQueueSizeList(i).text = x.toString
         }
 
-        if (main.generateDetailCount >= 30) {
-          main.stopGenerateDetail()
-          println(">>END PROGRAMM")
-        }
+        Thread.sleep(1)
+
       }
     }
   }).start()

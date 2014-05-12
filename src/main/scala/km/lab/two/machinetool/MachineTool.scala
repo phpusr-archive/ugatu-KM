@@ -21,7 +21,7 @@ case class MachineTool(name: String) {
   private val detailQueue = mutable.Queue[Detail]()
 
   /** Действие над обработанной деталью */
-  private var action: Detail => Unit = null
+  private var action: (Detail, Boolean) => Unit = null
 
   /** Logger */
   val logger = new Logger(true, true, true)
@@ -35,18 +35,15 @@ case class MachineTool(name: String) {
             val currentDetail = detailQueue.dequeue()
             logger.debug(s"${MachineTool.this} processes $currentDetail")
             currentDetail.operation()
-            action(currentDetail)
+            action(currentDetail, false)
           }
         }
-        Thread.sleep(500)
+        Thread.sleep(100)
       }
     }
   })
 
   //--------------------------------------------------
-
-  /** //TODO */
-  //def act_= (a: Detail => Unit): Unit = action = a
 
   /** Добавление детали в очередь */
   def addDetail(detail: Detail) = synchronized {
@@ -80,7 +77,7 @@ object MachineTool {
   private val list = List(A1, A2, A3)
 
   /** Установить действие над обработанной деталью всем станкам */
-  def setAction(action: Detail => Unit) = list.foreach(_.action = action)
+  def setAction(action: (Detail, Boolean) => Unit) = list.foreach(_.action = action)
 
   /** Запустить все станки */
   def startAll() = list.foreach(_.start())

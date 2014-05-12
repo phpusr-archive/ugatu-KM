@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 /**
  * Генератор деталей
  */
-class DetailGenerator(detailType: DetailType, action: Detail => Unit, incomingInterval: Timeslot) {
+class DetailGenerator(detailType: DetailType, action: (Detail, Boolean) => Unit, incomingInterval: Timeslot) {
 
   /** Флаг работы генератора */
   private val work = new AtomicBoolean(false)
@@ -26,7 +26,7 @@ class DetailGenerator(detailType: DetailType, action: Detail => Unit, incomingIn
     override def run() {
       val detailName = "Detail"
       var detailIndex = 0
-      while (work.get()) { //TODO почему-то не останавливается
+      while (work.get()) {
         detailIndex += 1
         val incomingMilis = incomingInterval.get
         logger.debug(s"Incoming interval: ${incomingMilis/1000} s.")
@@ -35,7 +35,7 @@ class DetailGenerator(detailType: DetailType, action: Detail => Unit, incomingIn
         val detail = Detail(s"$detailName-$detailIndex", DetailType.V1)
         logger.debug(s"DetailGenerator generate detail: $detail")
 
-        action(detail)
+        action(detail, true)
       }
     }
   })

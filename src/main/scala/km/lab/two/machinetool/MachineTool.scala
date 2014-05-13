@@ -6,6 +6,7 @@ import org.dyndns.phpusr.util.log.Logger
 import java.util.concurrent.atomic.AtomicBoolean
 import km.lab.two.constants.Const
 import org.dyndns.phpusr.util.stat.Stat
+import java.util.{TimerTask, Timer}
 
 /**
  * @author phpusr
@@ -44,10 +45,6 @@ class MachineTool(name: String) {
             currentDetail.operation { v => buzyState.set(false) }
             action(currentDetail, false)
           }
-
-          // Подсчет средней загрузки станка
-          avgLoad.newElement()
-          avgLoad.add(detailQueue.size)
         }
         Thread.sleep(Const.ThreadSleepMilis)
       }
@@ -58,6 +55,14 @@ class MachineTool(name: String) {
   private val avgLoad = new Stat
 
   //--------------------------------------------------
+
+  // Подсчет средней загрузки станка
+  new Timer().schedule(new TimerTask() {
+    override def run() {
+      avgLoad.newElement()
+      avgLoad.add(detailQueue.size)
+    }
+  }, 0, 1000)
 
   /** Добавление детали в очередь */
   def addDetail(detail: Detail) = synchronized {

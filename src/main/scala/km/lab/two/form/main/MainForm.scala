@@ -78,7 +78,7 @@ object MainForm extends SimpleSwingApplication {
   }
 
   // Запуск генерации и обработки деталей
-  val main = new Workshop(10)
+  val main = new Workshop(40)
   main.start()
 
   // Снятие показаний со станков

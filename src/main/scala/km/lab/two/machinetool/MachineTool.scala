@@ -84,6 +84,7 @@ class MachineTool(name: String) {
     enable.set(false)
   }
 
+  override def toString = s"MachineTool($name)"
 }
 
 /**

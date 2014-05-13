@@ -31,18 +31,19 @@ class MachineTool(name: String) {
   private val logger = new Logger(true, true, true)
 
   /** Состояние занятости станка */
-  private val buzyState = new AtomicBoolean(false)
+  private val busyState = new AtomicBoolean(false)
+  private def buzyStateInt = if (busyState.get) 1 else 0
 
   /** Обработчик деталей */
   private val handler = new Thread(new Runnable {
     override def run() {
       while (enable.get) {
         detailQueue.synchronized {
-          if (detailQueue.nonEmpty && !buzyState.get) {
-            buzyState.set(true)
+          if (detailQueue.nonEmpty && !busyState.get) {
+            busyState.set(true)
             val currentDetail = detailQueue.dequeue()
             logger.debug(s"${MachineTool.this} processes $currentDetail")
-            currentDetail.operation { v => buzyState.set(false) }
+            currentDetail.operation { v => busyState.set(false) }
             action(currentDetail, false)
           }
         }
@@ -60,7 +61,7 @@ class MachineTool(name: String) {
   new Timer().schedule(new TimerTask() {
     override def run() {
       avgLoad.newElement()
-      avgLoad.add(detailQueue.size)
+      avgLoad.add(detailQueue.size + buzyStateInt)
     }
   }, 0, 1000)
 
@@ -107,5 +108,5 @@ object MachineTool {
   def stopAll() = list.foreach(_.stop())
 
   /** Размеры очередей на станках */
-  def detailQueueSize = list.map(e => (e.detailQueue.size, if (e.buzyState.get) 1 else 0, e.avgLoad.avg))
+  def detailQueueSize = list.map(e => (e.detailQueue.size, e.buzyStateInt, e.avgLoad.avg))
 }

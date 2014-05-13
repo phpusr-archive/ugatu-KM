@@ -30,7 +30,7 @@ object DetailType {
  * Деталь
  */
 case class Detail(name: String, detailType: DetailType) {
-  /** Очередь операций наод деталью */
+  /** Очередь операций над деталью */
   private val operationQueue = mutable.Queue[Operation]()
 
   /** Дата создания детали */

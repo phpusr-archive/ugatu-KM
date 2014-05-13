@@ -5,6 +5,7 @@ import java.awt.Insets
 import km.lab.two.workshop.Workshop
 import km.lab.two.constants.Const
 import javax.swing.BorderFactory
+import scala.swing.event.ButtonClicked
 
 /**
  * @author phpusr
@@ -36,22 +37,36 @@ object MainForm extends SimpleSwingApplication {
   /** Время работы мастерской */
   private val workedTimeLabel = defaultLabel()
 
+  // Кнопки
+  val workTimeTextField = new TextField("40") {
+    minimumSize = new Dimension(50, minimumSize.height)
+    preferredSize = new Dimension(50, preferredSize.height)
+  }
+  val startButton = new Button("Старт")
+  val exitButton = new Button("Выход")
+
   // Компоненты по умолчанию
   private def defaultLabel() = new Label("0")
 
   def top = new MainFrame {
     contents = new GridBagPanel {
       val c = new Constraints
-      c.insets = new Insets(5, 20, 5, 20)
+      c.insets = new Insets(5, 5, 5, 5)
 
+      c.gridwidth = 3
+      c.anchor = GridBagPanel.Anchor.Center
       layout(new FlowPanel {
         contents += new Label("Отработано времени:")
         contents += workedTimeLabel
       }) = c
 
+      // Панель с инф-й о станках
       c.gridy = 1
+      c.gridwidth = 1
       layout(new GridBagPanel {
         border = BorderFactory.createTitledBorder("Станки")
+        minimumSize = new Dimension(160, 130)
+        preferredSize = new Dimension(160, 130)
         val c = new Constraints
         c.insets = new Insets(5, 5, 5, 5)
 
@@ -62,8 +77,11 @@ object MainForm extends SimpleSwingApplication {
         }
       }) = c
 
+      // Панель со статистикой
       layout(new GridBagPanel {
         border = BorderFactory.createTitledBorder("Статистика деталей")
+        minimumSize = new Dimension(220, 130)
+        preferredSize = new Dimension(220, 130)
         val c = new Constraints
         c.insets = new Insets(5, 5, 5, 5)
 
@@ -75,13 +93,18 @@ object MainForm extends SimpleSwingApplication {
         layout(warehouuseDetailCountLabel) = c
 
         c.gridy = 2
-        layout(new Label("Очередь:")) = c
+        layout(new Label("В очереди на распр-е:") {
+          tooltip = "Кол-во деталей в очереди на распределение по станкам"
+        }) = c
         layout(detailQueueSizeLabel) = c
 
       }) = c
 
+      // Панель со средним временем
       layout(new GridBagPanel {
         border = BorderFactory.createTitledBorder("Среднее время обработки детали")
+        minimumSize = new Dimension(220, 130)
+        preferredSize = new Dimension(220, 130)
         val c = new Constraints
         c.insets = new Insets(5, 5, 5, 5)
 
@@ -94,38 +117,64 @@ object MainForm extends SimpleSwingApplication {
 
       }) = c
 
+      // Панель с кнопками
+      c.gridy = 2
+      c.gridwidth = 3
+      layout(new GridBagPanel {
+        val c = new Constraints
+        c.insets = new Insets(5, 5, 5, 5)
+
+        layout(new Label("Отработать часов:")) = c
+        layout(workTimeTextField) = c
+        layout(startButton) = c
+        layout(exitButton) = c
+      }) = c
+
     }
 
     centerOnScreen()
   }
 
-  // Запуск генерации и обработки деталей
-  val main = new Workshop(40)
-  main.start()
+  // Обработчики событий формы
+  listenTo(startButton, exitButton)
 
-  // Снятие показаний со станков
-  new Thread(new Runnable {
-    override def run() {
-      while (main.enable.get) {
+  reactions += {
+    case ButtonClicked(`startButton`) =>
+      startButton.enabled = false
+      startWorkshop()
+    case ButtonClicked(`exitButton`) => System.exit(0)
+  }
 
-        warehouuseDetailCountLabel.text = main.warehouse.size.toString
-        generateDetailCountLabel.text = main.generateDetailCount.toString
-        detailQueueSizeLabel.text = main.detailQueue.size.toString
+  /** Запуск мастерской */
+  private def startWorkshop() {
+    // Запуск генерации и обработки деталей
+    val workshop = new Workshop(workTimeTextField.text.toInt)
+    workshop.start()
 
-        val avgDetailHandlerTime = main.avgDetailHandlerTime
-        avgDetailHandlerTimeV1Label.text = milisToMinutes(avgDetailHandlerTime._1)
-        avgDetailHandlerTimeV2Label.text = milisToMinutes(avgDetailHandlerTime._2)
+    // Снятие показаний со станков
+    new Thread(new Runnable {
+      override def run() {
+        while (workshop.enable.get) {
 
-        workedTimeLabel.text = milisToHours(main.workedTime)
+          warehouuseDetailCountLabel.text = workshop.warehouse.size.toString
+          generateDetailCountLabel.text = workshop.generateDetailCount.toString
+          detailQueueSizeLabel.text = workshop.detailQueue.size.toString
 
-        main.machineToolDetailQueueSize.zipWithIndex.foreach{case (x, i) =>
-          machineToolsQueueSizeList(i).text = s"${x._1} (${x._2}) (${x._3 formatted "%.2f"})"
+          val avgDetailHandlerTime = workshop.avgDetailHandlerTime
+          avgDetailHandlerTimeV1Label.text = milisToMinutes(avgDetailHandlerTime._1)
+          avgDetailHandlerTimeV2Label.text = milisToMinutes(avgDetailHandlerTime._2)
+
+          workedTimeLabel.text = milisToHours(workshop.workedTime)
+
+          workshop.machineToolDetailQueueSize.zipWithIndex.foreach{case (x, i) =>
+            machineToolsQueueSizeList(i).text = s"${x._1} (${x._2}) (${x._3 formatted "%.2f"})"
+          }
+
+          Thread.sleep(100)
         }
-
-        Thread.sleep(100)
       }
-    }
-  }).start()
+    }).start()
+  }
 
   /** мс. -> мин. (с учетом ускорения времени) */
   private def milisToMinutes(milis: Long) = Math.round(milis.toFloat * Const.Acceleration / 1000 / 60).toString + " мин."

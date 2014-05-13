@@ -12,11 +12,16 @@ package org.dyndns.phpusr.util.stat
 // TODO add tests
 class Stat {
   /** Кол-во элементов */
-  var elementsCount = 0L
+  private var _elementsCount = 0L
   /** Число выполненных операций для текущего элемента  */
-  var currentElementCounter = 0L
+  private var _currentElementCounter = 0L
   /** Число выполненных операций для всех элементов  */
-  var allElementsCounter = 0L
+  private var _allElementsCounter = 0L
+
+  // Getters
+  def elementsCount = synchronized(_elementsCount)
+  def currentElementCounter = synchronized(_currentElementCounter)
+  def allElementsCounter = synchronized(_allElementsCounter)
 
   /**
    * Считать новый элемент
@@ -24,31 +29,33 @@ class Stat {
    * Сбросить подсчет текущего
    * Увеличить кол-во элементов
    */
-  def newElement() {
-    currentElementCounter = 0
-    elementsCount += 1
+  def newElement() = synchronized {
+    _currentElementCounter = 0
+    _elementsCount += 1
   }
 
   /** Увеличить счетчик для текущего элемента */
-  def inc() {
-    currentElementCounter += 1
-    allElementsCounter += 1
+  def inc() = synchronized {
+    _currentElementCounter += 1
+    _allElementsCounter += 1
   }
 
   /** Увеличить значение текущего элемента */
-  def add(value: Long) {
-    currentElementCounter += value
-    allElementsCounter += value
+  def add(value: Long) = synchronized {
+    _currentElementCounter += value
+    _allElementsCounter += value
   }
 
   /** Среднее число операций для элемента */
-  def avg = allElementsCounter.toFloat / elementsCount
+  def avg = synchronized {
+    _allElementsCounter.toFloat / _elementsCount
+  }
 
   /** Сброс статистики */
-  def reset() {
-    elementsCount = 0
-    currentElementCounter = 0
-    allElementsCounter = 0
+  def reset() = synchronized {
+    _elementsCount = 0
+    _currentElementCounter = 0
+    _allElementsCounter = 0
   }
 }
 

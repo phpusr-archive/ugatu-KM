@@ -49,6 +49,7 @@ object MainForm extends SimpleSwingApplication {
   private def defaultLabel() = new Label("0")
 
   def top = new MainFrame {
+    title = "Моделирование работы участка цеха"
     contents = new GridBagPanel {
       val c = new Constraints
       c.insets = new Insets(5, 5, 5, 5)
@@ -56,7 +57,7 @@ object MainForm extends SimpleSwingApplication {
       c.gridwidth = 3
       c.anchor = GridBagPanel.Anchor.Center
       layout(new FlowPanel {
-        contents += new Label("Отработано времени:")
+        contents += new Label("Отработано часов:")
         contents += workedTimeLabel
       }) = c
 
@@ -102,9 +103,9 @@ object MainForm extends SimpleSwingApplication {
 
       // Панель со средним временем
       layout(new GridBagPanel {
-        border = BorderFactory.createTitledBorder("Среднее время обработки детали")
-        minimumSize = new Dimension(220, 130)
-        preferredSize = new Dimension(220, 130)
+        border = BorderFactory.createTitledBorder("Среднее время обработки деталей")
+        minimumSize = new Dimension(230, 130)
+        preferredSize = new Dimension(230, 130)
         val c = new Constraints
         c.insets = new Insets(5, 5, 5, 5)
 

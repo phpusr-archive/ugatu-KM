@@ -16,7 +16,7 @@ import scala.swing.event.ButtonClicked
 /**
  * Главная форма
  */
-object MainForm extends SimpleSwingApplication {
+object Lab2MainForm extends SimpleSwingApplication {
 
   /** Лейбл кол-ва деталей на складе */
   private val warehouuseDetailCountLabel = defaultLabel()

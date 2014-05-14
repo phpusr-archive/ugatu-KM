@@ -1,7 +1,7 @@
 package km.lab.common.run
 
 import javax.swing.{JFrame, UIManager}
-import km.lab.two.form.main.MainForm
+import km.lab.two.form.main.Lab2MainForm
 
 /**
  * @author phpusr
@@ -24,5 +24,5 @@ object Main extends App {
   JFrame.setDefaultLookAndFeelDecorated(true)
 
   // Создание и запуск главной формы
-  MainForm.main(args)
+  Lab2MainForm.main(args)
 }

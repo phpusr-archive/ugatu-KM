@@ -10,6 +10,7 @@ import org.dyndns.phpusr.util.stat.Stat
 
 /**
  * Статистика магазина
+ * @param cashierUpTime Вероятность работы кассира
  * @param queueLength Средняя длина очереди
  */
-case class MiniMarketStat(queueLength: Stat)
+case class MiniMarketStat(cashierUpTime: Stat, queueLength: Stat)

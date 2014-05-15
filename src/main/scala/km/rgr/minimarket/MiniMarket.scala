@@ -47,7 +47,7 @@ class MiniMarket {
   })
 
   /** Статистика */
-  private val stat = MiniMarketStat(new Stat)
+  private val stat = MiniMarketStat(new Stat, new Stat)
 
   /** Поток обслуживания очереди покупателей */
   private val serviceThread = new Thread(new Runnable {
@@ -81,6 +81,7 @@ class MiniMarket {
   private val statTimer = new Timer(1000, new ActionListener {
     override def actionPerformed(e: ActionEvent) = synchronized {
       stat.queueLength.newElementAndAdd(queue.size)
+      stat.cashierUpTime.newElementAndAdd(cashier.customerServiceNowCount)
     }
   })
 
@@ -109,11 +110,13 @@ class MiniMarket {
   }
 
   /** Хранилище информации о магазине */
-  case class MiniMarketInfo(customerCount: Int, serviceCustomerCount: Int, notServiceCustomerCount: Int, customerServiceNowCount: Int, queueLength: Int, avgQueueLength: Float)
+  case class MiniMarketInfo(customerCount: Int, serviceCustomerCount: Int, notServiceCustomerCount: Int, customerServiceNowCount: Int, queueLength: Int,
+                            pCashierDownTime: Float, avgQueueLength: Float)
 
   /** Информация о работе магазина */
   def getInfo = synchronized {
-    MiniMarketInfo(customerCount.get, serviceCustomerList.size, notServiceCustomerList.size, cashier.customerServiceNowCount, queue.size, stat.queueLength.avg)
+    MiniMarketInfo(customerCount.get, serviceCustomerList.size, notServiceCustomerList.size, cashier.customerServiceNowCount, queue.size,
+      1-stat.cashierUpTime.avg, stat.queueLength.avg)
   }
 
   /** Остановка генерирования покупателей */

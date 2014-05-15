@@ -41,13 +41,15 @@ class MiniMarket {
   /** Счетчик зашедших покупателей */
   private val customerCount = new AtomicInteger(0)
   /** Генератор покупателей */
-  private val customerGenerator = new CustomerGenerator({ c =>
+  private val customerGenerator = new CustomerGenerator({ customer =>
     customerCount.getAndAdd(1)
-    synchronized(notServiceCustomerList += c)
+    // Установка времени посещения
+    customer.setVisitTime()
+    synchronized(notServiceCustomerList += customer)
   })
 
   /** Статистика */
-  private val stat = MiniMarketStat(new Stat, new Stat, new Stat, new Stat)
+  private val stat = MiniMarketStat(new Stat, new Stat, new Stat, new Stat, new Stat)
 
   /** Поток обслуживания очереди покупателей */
   private val serviceThread = new Thread(new Runnable {
@@ -55,15 +57,18 @@ class MiniMarket {
       while(enable.get) {
         if (cashier.free && queue.nonEmpty) {
           val customer = queue.dequeue()
+          // Подсчет среденго времени ожидания обслуживания
           stat.waitServiceTime.newElementAndAdd(customer.calcWait())
           cashier.serviceCustomer(customer)
+          // Подсчет среденго времени пребывания покупателей
+          stat.stayTime.newElementAndAdd(customer.stayTime)
           serviceCustomerList += customer
         }
       }
     }
   })
 
-  /** Поток становления покупателей в очередь */
+  /** Поток становления покупателей в очередь */ //TODO поместить выше
   private val queueThread = new Thread(new Runnable {
     override def run() {
       while(enable.get) {
@@ -115,12 +120,12 @@ class MiniMarket {
 
   /** Хранилище информации о магазине */
   case class MiniMarketInfo(customerCount: Int, serviceCustomerCount: Int, notServiceCustomerCount: Int, customerServiceNowCount: Int, queueLength: Int,
-                            pCashierDownTime: Float, avgQueueLength: Float, avgCustomerCount: Float, avgWaitServiceTime: Float)
+                            pCashierDownTime: Float, avgQueueLength: Float, avgCustomerCount: Float, avgWaitServiceTime: Float, avgStayTime: Float)
 
   /** Информация о работе магазина */
   def getInfo = synchronized {
     MiniMarketInfo(customerCount.get, serviceCustomerList.size, notServiceCustomerList.size, cashier.customerServiceNowCount, queue.size,
-      1-stat.cashierUpTime.avg, stat.queueLength.avg, stat.customerCount.avg, stat.waitServiceTime.avg)
+      1-stat.cashierUpTime.avg, stat.queueLength.avg, stat.customerCount.avg, stat.waitServiceTime.avg, stat.stayTime.avg)
   }
 
   /** Остановка генерирования покупателей */

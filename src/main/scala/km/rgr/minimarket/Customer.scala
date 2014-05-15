@@ -26,6 +26,9 @@ case class Customer(name: String) {
   /** Время ожидания обслуживания (мс.) */
   private var _waitMillis = 0L
 
+  /** Время захода в магазин */
+  private var _visitTime: Date = null
+
   // Таймер покупок покупателя
   new Timer().schedule(new TimerTask {
     override def run() {
@@ -53,5 +56,10 @@ case class Customer(name: String) {
     _waitMillis
   }
 
+  /** Установить время посещения магазина текущим */
+  def setVisitTime() = _visitTime = new Date
+
+  /** Время пребывания (мс.) */
+  def stayTime = new Date().getTime - _visitTime.getTime
 
 }

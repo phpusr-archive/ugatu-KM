@@ -14,5 +14,6 @@ import org.dyndns.phpusr.util.stat.Stat
  * @param queueLength Средняя длина очереди
  * @param customerCount Среднее число покупателей
  * @param waitServiceTime Среднее время ожидания обслуживания
+ * @param stayTime Среднее время пребывания
  */
-case class MiniMarketStat(cashierUpTime: Stat, queueLength: Stat, customerCount: Stat, waitServiceTime: Stat)
+case class MiniMarketStat(cashierUpTime: Stat, queueLength: Stat, customerCount: Stat, waitServiceTime: Stat, stayTime: Stat)

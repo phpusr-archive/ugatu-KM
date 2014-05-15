@@ -1,5 +1,8 @@
 package km.rgr.minimarket
 
+import km.lab.two.timeslot.Timeslot
+import java.util.{TimerTask, Timer}
+
 /**
  * @author phpusr
  *         Date: 15.05.14
@@ -11,7 +14,19 @@ package km.rgr.minimarket
  */
 case class Customer(name: String) {
 
+  /** Интервал времени покупок покупателя */
+  private val shoppingInterval = Timeslot(5, 90).get
+  
+  private var _allBought = false
+
+  // Таймер покупок покупателя
+  new Timer().schedule(new TimerTask {
+    override def run() {
+      _allBought = true 
+    }
+  }, shoppingInterval)
+
   /** Все ли купил покупатель (идет в очередь) */
-  def allBought = ???
+  def allBought = _allBought
 
 }

@@ -58,7 +58,8 @@ object RgrMainForm extends SimpleSwingApplication {
           s"\nОбслуженные покупатели: ${info.serviceCustomerCount}" +
           s"\n-----------------------------------" +
           s"\nВероятность простоя кассира: ${info.pCashierDownTime formatted floatFormat}" +
-          s"\nСредняя длина очереди: ${info.avgQueueLength formatted floatFormat}"
+          s"\nСредняя длина очереди: ${info.avgQueueLength formatted floatFormat}" +
+          s"\nСреднее число покупателей: ${info.avgCustomerCount formatted floatFormat}"
       }
     }).start()
 

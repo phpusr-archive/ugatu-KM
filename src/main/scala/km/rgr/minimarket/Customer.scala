@@ -9,4 +9,9 @@ package km.rgr.minimarket
 /**
  * Покупатель
  */
-case class Customer(name: String)
+case class Customer(name: String) {
+
+  /** Все ли купил покупатель (идет в очередь) */
+  def allBought = ???
+
+}

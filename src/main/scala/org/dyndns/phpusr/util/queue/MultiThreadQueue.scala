@@ -21,4 +21,6 @@ class MultiThreadQueue[A] {
 
   def nonEmpty = queue.nonEmpty
 
+  def size = queue.size
+
 }

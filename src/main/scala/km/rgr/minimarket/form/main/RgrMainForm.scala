@@ -48,11 +48,12 @@ object RgrMainForm extends SimpleSwingApplication {
     new Timer(100, new ActionListener {
       override def actionPerformed(e: ActionEvent) {
         val info = market.getInfo
-        infoTextArea.text = s"Не обслуженные покупатели: ${info.notServiceCustomerCount}" +
-          s"\nОбслуженные покупатели: ${info.serviceCustomerCount}" +
-          s"\nОчередь у кассы: ${info.queueLength}" +
+        infoTextArea.text =
+          s"\nВсего зашло: ${info.customerCount}" +
+          s"\nПокупатели выбирающие товары: ${info.notServiceCustomerCount}" +
           s"\nВ кассе: ${info.customerServiceNowCount}" +
-          s"\nВсего зашло: ${info.customerCount}"
+          s"\nОчередь у кассы: ${info.queueLength}" +
+          s"\nОбслуженные покупатели: ${info.serviceCustomerCount}"
       }
     }).start()
 

@@ -19,8 +19,8 @@ class MultiThreadQueue[A] {
 
   def +=(el: A) = synchronized(queue += el)
 
-  def nonEmpty = queue.nonEmpty
+  def nonEmpty = synchronized(queue.nonEmpty)
 
-  def size = queue.size
+  def size = synchronized(queue.size)
 
 }

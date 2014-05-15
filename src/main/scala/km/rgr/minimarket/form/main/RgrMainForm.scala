@@ -4,6 +4,7 @@ import scala.swing._
 import km.rgr.minimarket.MiniMarket
 import javax.swing.Timer
 import java.awt.event.{ActionEvent, ActionListener}
+import km.rgr.minimarket.constants.Const
 
 /**
  * @author phpusr
@@ -16,7 +17,7 @@ import java.awt.event.{ActionEvent, ActionListener}
  */
 object RgrMainForm extends SimpleSwingApplication {
 
-  private val infoTextArea = new TextArea(15, 20)
+  private val infoTextArea = new TextArea(15, 30)
 
   private val market = new MiniMarket
 
@@ -59,11 +60,15 @@ object RgrMainForm extends SimpleSwingApplication {
           s"\n-----------------------------------" +
           s"\nВероятность простоя кассира: ${info.pCashierDownTime formatted floatFormat}" +
           s"\nСредняя длина очереди: ${info.avgQueueLength formatted floatFormat}" +
-          s"\nСреднее число покупателей: ${info.avgCustomerCount formatted floatFormat}"
+          s"\nСреднее число покупателей: ${info.avgCustomerCount.toLong}" +
+          s"\nСреднее время ожидания обслуживания: ${millisToMinutes(info.avgWaitServiceTime.toLong)}"
       }
     }).start()
 
 
   }
+
+  /** мс. -> мин. (с учетом ускорения времени) */
+  private def millisToMinutes(milis: Long) = Math.round(milis.toFloat * Const.Acceleration / 1000 / 60).toString + " мин."
 
 }

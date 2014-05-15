@@ -47,7 +47,7 @@ class MiniMarket {
   })
 
   /** Статистика */
-  private val stat = MiniMarketStat(new Stat, new Stat, new Stat)
+  private val stat = MiniMarketStat(new Stat, new Stat, new Stat, new Stat)
 
   /** Поток обслуживания очереди покупателей */
   private val serviceThread = new Thread(new Runnable {
@@ -55,6 +55,7 @@ class MiniMarket {
       while(enable.get) {
         if (cashier.free && queue.nonEmpty) {
           val customer = queue.dequeue()
+          stat.waitServiceTime.newElementAndAdd(customer.calcWait())
           cashier.serviceCustomer(customer)
           serviceCustomerList += customer
         }
@@ -67,9 +68,11 @@ class MiniMarket {
     override def run() {
       while(enable.get) {
         synchronized {
-          notServiceCustomerList.filter(_.allBought).foreach { c =>
-            queue += c
-            notServiceCustomerList -= c
+          notServiceCustomerList.filter(_.allBought).foreach { customer =>
+            queue += customer
+            // Старт подсчета времени ожидания
+            customer.startWait()
+            notServiceCustomerList -= customer
           }
         }        
         Thread.sleep(Const.ThreadSleepMilis)
@@ -112,12 +115,12 @@ class MiniMarket {
 
   /** Хранилище информации о магазине */
   case class MiniMarketInfo(customerCount: Int, serviceCustomerCount: Int, notServiceCustomerCount: Int, customerServiceNowCount: Int, queueLength: Int,
-                            pCashierDownTime: Float, avgQueueLength: Float, avgCustomerCount: Float)
+                            pCashierDownTime: Float, avgQueueLength: Float, avgCustomerCount: Float, avgWaitServiceTime: Float)
 
   /** Информация о работе магазина */
   def getInfo = synchronized {
     MiniMarketInfo(customerCount.get, serviceCustomerList.size, notServiceCustomerList.size, cashier.customerServiceNowCount, queue.size,
-      1-stat.cashierUpTime.avg, stat.queueLength.avg, stat.customerCount.avg)
+      1-stat.cashierUpTime.avg, stat.queueLength.avg, stat.customerCount.avg, stat.waitServiceTime.avg)
   }
 
   /** Остановка генерирования покупателей */

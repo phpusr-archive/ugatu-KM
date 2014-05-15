@@ -1,6 +1,7 @@
 package km.rgr.minimarket
 
 import km.rgr.minimarket.constants.Const
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * @author phpusr
@@ -14,24 +15,24 @@ import km.rgr.minimarket.constants.Const
 case class Cashier() {
 
   /** Свободен или занят */
-  private var _free = true
+  private val _free = new AtomicBoolean(true)
 
   /** Интервал времени обслуживания */
   private val serviceTime = Const.CashierServiceTime
 
   /** Свободен ли кассир */
-  def free: Boolean = _free
+  def free: Boolean = _free.get
 
   /** Обслужить покупателя */
   def serviceCustomer(customer: Customer) = synchronized {
     assert(free)
 
-    _free = false
+    _free.set(false)
     Thread.sleep(serviceTime.get)
-    _free = true
+    _free.set(true)
   }
 
   /** Количество обслуживаемых покупателей в данный момент */
-  def customerServiceNowCount = synchronized(if (free) 0 else 1)
+  def customerServiceNowCount = if (free) 0 else 1
 
 }

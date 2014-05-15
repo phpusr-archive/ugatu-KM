@@ -11,7 +11,7 @@ package km.rgr.minimarket.constants
  */
 object Const {
 
-  /** Ускорение времени */ //TODO
+  /** Ускорение времени */
   val Acceleration = 6000
 
   /** Время засыпания потоков */

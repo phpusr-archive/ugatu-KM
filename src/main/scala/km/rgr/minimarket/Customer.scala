@@ -16,7 +16,8 @@ case class Customer(name: String) {
 
   /** Интервал времени покупок покупателя */
   private val ShoppingInterval = Const.CustomerShoppingInterval.get
-  
+
+  /** Все ли купил покупатель (идет в очередь) */
   private var _allBought = false
 
   /** Время становления в очередь */

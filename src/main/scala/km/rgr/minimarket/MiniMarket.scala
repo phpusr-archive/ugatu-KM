@@ -69,9 +69,9 @@ class MiniMarket {
       while(enable.get) {
         synchronized {
           notServiceCustomerList.filter(_.allBought).foreach { customer =>
-            queue += customer
             // Старт подсчета времени ожидания
             customer.startWait()
+            queue += customer
             notServiceCustomerList -= customer
           }
         }        

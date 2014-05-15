@@ -25,7 +25,7 @@ object Const {
   val CustomerShoppingInterval = Timeslot(5, 90)
 
   /** Интервал времени обслуживания */
-  val CashierServiceTime = Timeslot(1, 5)
+  val CashierServiceTime = Timeslot(2, 5)
 
   /** Перерыв между заходами покупателей */
   val CustomerGenerationTimeout = Timeslot(2, 5)

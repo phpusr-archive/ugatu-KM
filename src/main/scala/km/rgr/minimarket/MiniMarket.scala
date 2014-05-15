@@ -28,12 +28,15 @@ class MiniMarket {
   /** Кассир */
   private val cashier = Cashier()
 
-  /** Покупатели находящиеся в магазине */
-  private val customerList = ListBuffer[Customer]()
+  /** Не обслуженные покупатели */
+  private val notServiceCustomerList = ListBuffer[Customer]()
+
+  /** Обслуженные покупатели */
+  private val serviceCustomerList = ListBuffer[Customer]()
 
   /** Генератор покупателей */
   private val customerGenerator = new CustomerGenerator({ c =>
-    synchronized(customerList += c)
+    synchronized(notServiceCustomerList += c)
   })
 
   /** Поток обслуживания очереди покупателей */
@@ -43,6 +46,7 @@ class MiniMarket {
         if (cashier.free && queue.nonEmpty) {
           val customer = queue.dequeue()
           cashier.serviceCustomer(customer)
+          serviceCustomerList += customer
         }
       }
     }
@@ -53,8 +57,11 @@ class MiniMarket {
     override def run() {
       while(enable.get) {
         synchronized {
-          customerList.filter(_.allBought).foreach(queue += _)
-        }
+          notServiceCustomerList.filter(_.allBought).foreach { c =>
+            queue += c
+            notServiceCustomerList -= c
+          }
+        }        
         Thread.sleep(Const.ThreadSleepMilis)
       }
     }
@@ -81,5 +88,15 @@ class MiniMarket {
     customerGenerator.stop()
   }
 
+  /** Хранилище информации о магазине */
+  case class MiniMarketInfo(serviceCustomerCount: Int, notServiceCustomerCount: Int, customerServiceNowCount: Int, queueLength: Int)
+
+  /** Информация о работе магазина */
+  def getInfo = synchronized {
+    MiniMarketInfo(serviceCustomerList.size, notServiceCustomerList.size, cashier.customerServiceNowCount, queue.size)
+  }
+
+  /** Остановка генерирования покупателей */
+  def stopCustomerGenerator() = customerGenerator.stop()
 
 }

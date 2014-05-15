@@ -2,7 +2,7 @@ package km.rgr.minimarket
 
 import java.util.concurrent.atomic.AtomicBoolean
 import org.dyndns.phpusr.util.log.Logger
-import km.rgr.minimarket.timeslot.Timeslot
+import km.rgr.minimarket.constants.Const
 
 /**
  * @author phpusr
@@ -20,7 +20,7 @@ class CustomerGenerator(action: Customer => Unit) {
   private val enable = new AtomicBoolean(false)
 
   /** Перерыв между заходами покупателей */ //TODO переделать под Пуассона
-  private val generationTimeout = Timeslot(5, 30)
+  private val generationTimeout = Const.CustomerGenerationTimeout
 
   /** Поток генерации покупателей */
   private val thread = new Thread(new Runnable {

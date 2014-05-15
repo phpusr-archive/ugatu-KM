@@ -1,7 +1,7 @@
 package km.rgr.minimarket
 
-import km.rgr.minimarket.timeslot.Timeslot
 import java.util.{TimerTask, Timer}
+import km.rgr.minimarket.constants.Const
 
 /**
  * @author phpusr
@@ -15,7 +15,7 @@ import java.util.{TimerTask, Timer}
 case class Customer(name: String) {
 
   /** Интервал времени покупок покупателя */
-  private val shoppingInterval = Timeslot(5, 90).get
+  private val shoppingInterval = Const.CustomerShoppingInterval.get
   
   private var _allBought = false
 

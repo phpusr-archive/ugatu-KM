@@ -1,5 +1,7 @@
 package km.rgr.minimarket.constants
 
+import km.rgr.minimarket.timeslot.Timeslot
+
 /**
  * @author phpusr
  *         Date: 12.05.14
@@ -12,9 +14,20 @@ package km.rgr.minimarket.constants
 object Const {
 
   /** Ускорение времени */
-  val Acceleration = 6000
+  val Acceleration = 600
 
   /** Время засыпания потоков */
   val ThreadSleepMilis = 100
+
+  //--------------------------------------------------//
+
+  /** Интервал времени покупок покупателя */
+  val CustomerShoppingInterval = Timeslot(5, 90)
+
+  /** Интервал времени обслуживания */
+  val CashierServiceTime = Timeslot(1, 10)
+
+  /** Перерыв между заходами покупателей */
+  val CustomerGenerationTimeout = Timeslot(5, 30)
 
 }

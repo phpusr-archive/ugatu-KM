@@ -1,7 +1,7 @@
 package km.rgr.minimarket
 
 import org.dyndns.phpusr.util.queue.MultiThreadQueue
-import java.util.concurrent.atomic.AtomicBoolean
+import java.util.concurrent.atomic.{AtomicInteger, AtomicBoolean}
 import scala.collection.mutable.ListBuffer
 import km.rgr.minimarket.constants.Const
 import org.dyndns.phpusr.util.log.Logger
@@ -34,8 +34,11 @@ class MiniMarket {
   /** Обслуженные покупатели */
   private val serviceCustomerList = ListBuffer[Customer]()
 
+  /** Счетчик зашедших покупателей */
+  private val customerCount = new AtomicInteger(0)
   /** Генератор покупателей */
   private val customerGenerator = new CustomerGenerator({ c =>
+    customerCount.getAndAdd(1)
     synchronized(notServiceCustomerList += c)
   })
 
@@ -89,11 +92,11 @@ class MiniMarket {
   }
 
   /** Хранилище информации о магазине */
-  case class MiniMarketInfo(serviceCustomerCount: Int, notServiceCustomerCount: Int, customerServiceNowCount: Int, queueLength: Int)
+  case class MiniMarketInfo(customerCount: Int, serviceCustomerCount: Int, notServiceCustomerCount: Int, customerServiceNowCount: Int, queueLength: Int)
 
   /** Информация о работе магазина */
   def getInfo = synchronized {
-    MiniMarketInfo(serviceCustomerList.size, notServiceCustomerList.size, cashier.customerServiceNowCount, queue.size)
+    MiniMarketInfo(customerCount.get, serviceCustomerList.size, notServiceCustomerList.size, cashier.customerServiceNowCount, queue.size)
   }
 
   /** Остановка генерирования покупателей */

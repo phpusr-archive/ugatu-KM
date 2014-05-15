@@ -46,6 +46,12 @@ class Stat {
     _allElementsCounter += value
   }
 
+  /** Считать новый элемент и увеличить значение */
+  def newElementAndAdd(value: Long) {
+    newElement()
+    add(value)
+  }
+
   /** Среднее число операций для элемента */
   def avg = synchronized {
     _allElementsCounter.toFloat / _elementsCount

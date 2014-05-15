@@ -1,6 +1,6 @@
 package km.rgr.minimarket
 
-import km.lab.two.timeslot.Timeslot
+import km.rgr.minimarket.timeslot.Timeslot
 import java.util.{TimerTask, Timer}
 
 /**

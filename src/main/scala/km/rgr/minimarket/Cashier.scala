@@ -1,6 +1,6 @@
 package km.rgr.minimarket
 
-import km.lab.two.timeslot.Timeslot
+import km.rgr.minimarket.timeslot.Timeslot
 
 /**
  * @author phpusr
@@ -17,7 +17,7 @@ case class Cashier() {
   private var _free = true
 
   /** Интервал времени обслуживания */
-  private val serviceTime = new Timeslot(1, 10)
+  private val serviceTime = Timeslot(1, 10)
 
   /** Свободен ли кассир */
   def free: Boolean = _free

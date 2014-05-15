@@ -1,4 +1,4 @@
-package experiment.multithread
+package experiment.lab2.multithread
 
 import scala.collection.mutable
 import java.util.concurrent.atomic.AtomicInteger

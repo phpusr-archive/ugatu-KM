@@ -1,4 +1,4 @@
-package experiment.detail
+package experiment.lab2.detail
 
 import km.lab.two.detail.{Detail, DetailType, DetailGenerator}
 import km.lab.two.timeslot.Timeslot

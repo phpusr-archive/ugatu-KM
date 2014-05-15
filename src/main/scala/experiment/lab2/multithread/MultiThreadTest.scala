@@ -1,4 +1,4 @@
-package experiment.multithread
+package experiment.lab2.multithread
 
 
 /**

@@ -1,4 +1,4 @@
-package experiment.timer
+package experiment.lab2.timer
 
 import java.util.{TimerTask, Timer}
 

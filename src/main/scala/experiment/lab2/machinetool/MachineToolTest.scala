@@ -1,4 +1,4 @@
-package experiment.machinetool
+package experiment.lab2.machinetool
 
 import km.lab.two.machinetool.MachineTool
 import km.lab.two.detail.{DetailType, Detail}

@@ -1,4 +1,4 @@
-package experiment.props
+package experiment.lab2.props
 
 /**
  * @author phpusr

@@ -15,7 +15,7 @@ import km.rgr.minimarket.constants.Const
 case class Customer(name: String) {
 
   /** Интервал времени покупок покупателя */
-  private val shoppingInterval = Const.CustomerShoppingInterval.get
+  private val ShoppingInterval = Const.CustomerShoppingInterval.get
   
   private var _allBought = false
 
@@ -30,7 +30,7 @@ case class Customer(name: String) {
     override def run() {
       _allBought = true 
     }
-  }, shoppingInterval)
+  }, ShoppingInterval)
 
   /** Все ли купил покупатель (идет в очередь) */
   def allBought = _allBought

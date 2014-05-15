@@ -32,6 +32,6 @@ case class Cashier() {
   }
 
   /** Количество обслуживаемых покупателей в данный момент */
-  def customerServiceNowCount = if (free) 0 else 1
+  def customerServiceNowCount = synchronized(if (free) 0 else 1)
 
 }

@@ -23,12 +23,15 @@ case class Cashier() {
   def free: Boolean = _free
 
   /** Обслужить покупателя */
-  def serviceCustomer(customer: Customer) {
+  def serviceCustomer(customer: Customer) = synchronized {
     assert(free)
 
     _free = false
     Thread.sleep(serviceTime.get)
     _free = true
   }
+
+  /** Количество обслуживаемых покупателей в данный момент */
+  def customerServiceNowCount = if (free) 0 else 1
 
 }

@@ -52,7 +52,9 @@ class MiniMarket {
   private val queueThread = new Thread(new Runnable {
     override def run() {
       while(enable.get) {
-        customerList.filter(_.allBought).foreach(queue += _)
+        synchronized {
+          customerList.filter(_.allBought).foreach(queue += _)
+        }
         Thread.sleep(Const.ThreadSleepMilis)
       }
     }

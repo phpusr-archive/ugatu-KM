@@ -5,6 +5,10 @@ import java.util.concurrent.atomic.{AtomicInteger, AtomicBoolean}
 import scala.collection.mutable.ListBuffer
 import km.rgr.minimarket.constants.Const
 import org.dyndns.phpusr.util.log.Logger
+import km.rgr.minimarket.stat.MiniMarketStat
+import org.dyndns.phpusr.util.stat.Stat
+import javax.swing.Timer
+import java.awt.event.{ActionEvent, ActionListener}
 
 /**
  * @author phpusr
@@ -42,6 +46,9 @@ class MiniMarket {
     synchronized(notServiceCustomerList += c)
   })
 
+  /** Статистика */
+  private val stat = MiniMarketStat(new Stat)
+
   /** Поток обслуживания очереди покупателей */
   private val serviceThread = new Thread(new Runnable {
     override def run() {
@@ -70,11 +77,20 @@ class MiniMarket {
     }
   })
 
+  /** Таймер подсчета статистики */
+  private val statTimer = new Timer(1000, new ActionListener {
+    override def actionPerformed(e: ActionEvent) = synchronized {
+      stat.queueLength.newElementAndAdd(queue.size)
+    }
+  })
+
   /** Запуск работы магазина */
   def start() {
     logger.debug("MiniMarket start")
 
     enable.set(true)
+    // Запуск подсчета статистики
+    statTimer.start()
     // Запуск обслуживания
     serviceThread.start()
     // Запуск становления покупателей в очередь
@@ -89,14 +105,15 @@ class MiniMarket {
 
     enable.set(false)
     customerGenerator.stop()
+    statTimer.stop()
   }
 
   /** Хранилище информации о магазине */
-  case class MiniMarketInfo(customerCount: Int, serviceCustomerCount: Int, notServiceCustomerCount: Int, customerServiceNowCount: Int, queueLength: Int)
+  case class MiniMarketInfo(customerCount: Int, serviceCustomerCount: Int, notServiceCustomerCount: Int, customerServiceNowCount: Int, queueLength: Int, avgQueueLength: Float)
 
   /** Информация о работе магазина */
   def getInfo = synchronized {
-    MiniMarketInfo(customerCount.get, serviceCustomerList.size, notServiceCustomerList.size, cashier.customerServiceNowCount, queue.size)
+    MiniMarketInfo(customerCount.get, serviceCustomerList.size, notServiceCustomerList.size, cashier.customerServiceNowCount, queue.size, stat.queueLength.avg)
   }
 
   /** Остановка генерирования покупателей */

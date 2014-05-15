@@ -44,6 +44,8 @@ object RgrMainForm extends SimpleSwingApplication {
 
     market.start()
 
+    val floatFormat = "%.2f"
+
     // Таймер обновления информации о магазине
     new Timer(100, new ActionListener {
       override def actionPerformed(e: ActionEvent) {
@@ -53,7 +55,9 @@ object RgrMainForm extends SimpleSwingApplication {
           s"\nПокупатели выбирающие товары: ${info.notServiceCustomerCount}" +
           s"\nВ кассе: ${info.customerServiceNowCount}" +
           s"\nОчередь у кассы: ${info.queueLength}" +
-          s"\nОбслуженные покупатели: ${info.serviceCustomerCount}"
+          s"\nОбслуженные покупатели: ${info.serviceCustomerCount}" +
+          s"\n-----------------------------------" +
+          s"\nСредняя длина очереди: ${info.avgQueueLength formatted floatFormat}"
       }
     }).start()
 

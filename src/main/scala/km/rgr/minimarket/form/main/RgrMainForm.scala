@@ -52,6 +52,7 @@ object RgrMainForm extends SimpleSwingApplication {
       override def actionPerformed(e: ActionEvent) {
         val info = market.getInfo
         infoTextArea.text =
+          s"\nКол-во часов работы: ${millisToHours(market.workTime)}" +
           s"\nВсего зашло: ${info.customerCount}" +
           s"\nПокупатели выбирающие товары: ${info.notServiceCustomerCount}" +
           s"\nВ кассе: ${info.customerServiceNowCount}" +
@@ -71,5 +72,8 @@ object RgrMainForm extends SimpleSwingApplication {
 
   /** мс. -> мин. (с учетом ускорения времени) */
   private def millisToMinutes(milis: Long) = Math.round(milis.toFloat * Const.Acceleration / 1000 / 60).toString + " мин."
+
+  /** мс. -> ч. (с учетом ускорения времени) */
+  private def millisToHours(milis: Long) = Math.round(milis.toFloat * Const.Acceleration / 1000 / 60 / 60).toString + " ч."
 
 }

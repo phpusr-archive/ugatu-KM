@@ -9,6 +9,7 @@ import km.rgr.minimarket.stat.MiniMarketStat
 import org.dyndns.phpusr.util.stat.Stat
 import javax.swing.Timer
 import java.awt.event.{ActionEvent, ActionListener}
+import java.util.Date
 
 /**
  * @author phpusr
@@ -50,6 +51,9 @@ class MiniMarket {
 
   /** Статистика */
   private val stat = MiniMarketStat(new Stat, new Stat, new Stat, new Stat, new Stat)
+
+  /** Время начала работы */
+  private var startTime: Date = null
 
   /** Поток становления покупателей в очередь */
   private val queueThread = new Thread(new Runnable {
@@ -94,10 +98,14 @@ class MiniMarket {
     }
   })
 
+  /** Время работы (мс.) */
+  def workTime = new Date().getTime - startTime.getTime
+
   /** Запуск работы магазина */
   def start() {
     logger.debug("MiniMarket start")
 
+    startTime = new Date()
     enable.set(true)
     // Запуск подсчета статистики
     statTimer.start()

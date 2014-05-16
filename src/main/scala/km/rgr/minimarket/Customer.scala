@@ -52,7 +52,6 @@ case class Customer(name: String) {
   /** Время ожидания обслуживания (мс.) */
   def waitMillis = {
     assert(_startWaitTime != null)
-    //assert(_waitMillis != 0) //TODO Иногда возникает ошибка
     _waitMillis
   }
 

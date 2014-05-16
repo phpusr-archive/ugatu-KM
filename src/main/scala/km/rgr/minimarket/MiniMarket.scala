@@ -51,6 +51,23 @@ class MiniMarket {
   /** Статистика */
   private val stat = MiniMarketStat(new Stat, new Stat, new Stat, new Stat, new Stat)
 
+  /** Поток становления покупателей в очередь */
+  private val queueThread = new Thread(new Runnable {
+    override def run() {
+      while(enable.get) {
+        synchronized {
+          notServiceCustomerList.filter(_.allBought).foreach { customer =>
+          // Старт подсчета времени ожидания
+            customer.startWait()
+            queue += customer
+            notServiceCustomerList -= customer
+          }
+        }
+        Thread.sleep(Const.ThreadSleepMilis)
+      }
+    }
+  })
+
   /** Поток обслуживания очереди покупателей */
   private val serviceThread = new Thread(new Runnable {
     override def run() {
@@ -64,23 +81,6 @@ class MiniMarket {
           stat.stayTime.newElementAndAdd(customer.stayTime)
           serviceCustomerList += customer
         }
-      }
-    }
-  })
-
-  /** Поток становления покупателей в очередь */ //TODO поместить выше
-  private val queueThread = new Thread(new Runnable {
-    override def run() {
-      while(enable.get) {
-        synchronized {
-          notServiceCustomerList.filter(_.allBought).foreach { customer =>
-            // Старт подсчета времени ожидания
-            customer.startWait()
-            queue += customer
-            notServiceCustomerList -= customer
-          }
-        }        
-        Thread.sleep(Const.ThreadSleepMilis)
       }
     }
   })

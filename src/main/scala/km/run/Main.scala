@@ -1,4 +1,4 @@
-package km.lab.common.run
+package km.run
 
 import javax.swing.{JFrame, UIManager}
 

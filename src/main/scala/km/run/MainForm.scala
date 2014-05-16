@@ -1,8 +1,9 @@
-package km.lab.common.run
+package km.run
 
 import scala.swing._
 import km.lab.one.montecarlo.MonteCarlo
 import km.lab.two.form.main.Lab2MainForm
+import km.rgr.minimarket.form.main.RgrMainForm
 
 /**
  * @author phpusr
@@ -33,6 +34,12 @@ object MainForm extends SimpleSwingApplication {
       c.gridy = 1
       layout(new Button(Action("Lab 2") {
         Lab2MainForm.main(args)
+      })) = c
+
+      // РГР
+      c.gridy = 2
+      layout(new Button(Action("RGR") {
+        RgrMainForm.main(args)
       })) = c
     }
 

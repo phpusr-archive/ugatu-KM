@@ -2,7 +2,7 @@ import scala.Some
 
 name := "KM"
 
-val runClass = "km.lab.common.run.Main"
+val runClass = "km.run.Main"
 
 scalaVersion := "2.10.3"
 
